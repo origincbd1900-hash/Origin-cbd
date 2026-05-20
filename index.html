@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Origin CBD</title>
+<meta name="theme-color" content="#C9A84C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Origin CBD">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg width='300' height='360' viewBox='0 0 300 360' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gold' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f7d46b'/%3E%3Cstop offset='45%25' stop-color='%23b8860b'/%3E%3Cstop offset='100%25' stop-color='%23ffe08a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='%23000'/%3E%3Cpath d='M150 20 L260 135 L235 280 L65 280 L40 135 Z' fill='none' stroke='url(%23gold)' stroke-width='5'/%3E%3Ccircle cx='150' cy='150' r='105' fill='none' stroke='url(%23gold)' stroke-width='5'/%3E%3Cpath d='M150 45 V255 H95 V150 H205 V205 H150 V175 H175 V150' fill='none' stroke='url(%23gold)' stroke-width='4'/%3E%3Cg stroke='url(%23gold)' stroke-width='2' fill='none' stroke-linecap='round'%3E%3Cpath d='M150 150 L150 75'/%3E%3Cpath d='M150 150 L125 80'/%3E%3Cpath d='M150 150 L175 80'/%3E%3Cpath d='M150 150 L105 105'/%3E%3Cpath d='M150 150 L195 105'/%3E%3Cpath d='M150 150 L95 145'/%3E%3Cpath d='M150 150 L205 145'/%3E%3Cpath d='M150 75 C142 95 142 120 150 150'/%3E%3Cpath d='M125 80 C115 105 120 130 150 150'/%3E%3Cpath d='M175 80 C185 105 180 130 150 150'/%3E%3Cpath d='M105 105 C110 130 125 145 150 150'/%3E%3Cpath d='M195 105 C190 130 175 145 150 150'/%3E%3C/g%3E%3Ctext x='63' y='130' font-family='Georgia,serif' font-size='42' fill='url(%23gold)' transform='rotate(-30 63 130)'%3EOrigin%3C/text%3E%3Ctext x='205' y='225' font-family='Georgia,serif' font-size='32' fill='url(%23gold)' transform='rotate(-38 205 225)'%3ECBD%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='300' height='360' viewBox='0 0 300 360' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gold' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f7d46b'/%3E%3Cstop offset='45%25' stop-color='%23b8860b'/%3E%3Cstop offset='100%25' stop-color='%23ffe08a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='%23000'/%3E%3Cpath d='M150 20 L260 135 L235 280 L65 280 L40 135 Z' fill='none' stroke='url(%23gold)' stroke-width='5'/%3E%3Ccircle cx='150' cy='150' r='105' fill='none' stroke='url(%23gold)' stroke-width='5'/%3E%3Cpath d='M150 45 V255 H95 V150 H205 V205 H150 V175 H175 V150' fill='none' stroke='url(%23gold)' stroke-width='4'/%3E%3Cg stroke='url(%23gold)' stroke-width='2' fill='none' stroke-linecap='round'%3E%3Cpath d='M150 150 L150 75'/%3E%3Cpath d='M150 150 L125 80'/%3E%3Cpath d='M150 150 L175 80'/%3E%3Cpath d='M150 150 L105 105'/%3E%3Cpath d='M150 150 L195 105'/%3E%3Cpath d='M150 150 L95 145'/%3E%3Cpath d='M150 150 L205 145'/%3E%3Cpath d='M150 75 C142 95 142 120 150 150'/%3E%3Cpath d='M125 80 C115 105 120 130 150 150'/%3E%3Cpath d='M175 80 C185 105 180 130 150 150'/%3E%3Cpath d='M105 105 C110 130 125 145 150 150'/%3E%3Cpath d='M195 105 C190 130 175 145 150 150'/%3E%3C/g%3E%3Ctext x='63' y='130' font-family='Georgia,serif' font-size='42' fill='url(%23gold)' transform='rotate(-30 63 130)'%3EOrigin%3C/text%3E%3Ctext x='205' y='225' font-family='Georgia,serif' font-size='32' fill='url(%23gold)' transform='rotate(-38 205 225)'%3ECBD%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, deleteDoc, writeBatch, increment, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const cfg = {
+    apiKey:"AIzaSyAeBh3LxOxEP4SutS8_91cTvQj022gPrCw",
+    authDomain:"origin-cbd.firebaseapp.com",
+    projectId:"origin-cbd",
+    storageBucket:"origin-cbd.firebasestorage.app",
+    messagingSenderId:"118129890739",
+    appId:"1:118129890739:web:7953e5ce7a50041d8e67c6"
+  };
+  const app = initializeApp(cfg);
+  const db = getFirestore(app);
+  window._db = db;
+  window._fn = { doc, getDoc, setDoc, updateDoc, collection, getDocs, deleteDoc, writeBatch, increment, query, where };
+  window._ready = true;
+  window.dispatchEvent(new Event('dbready'));
+</script>
+<style>
+:root{
+  --bg:#0F0F0F;--bg2:#161616;--bg3:#1E1E1E;
+  --card:#1A1A1A;--card2:#222;
+  --gold:#C9A84C;--gl:#E8C97A;--gd:rgba(201,168,76,0.15);
+  --green:#4CAF7D;--gdim:rgba(76,175,125,0.12);
+  --red:#FF6B6B;--rdim:rgba(255,107,107,0.1);
+  --text:#F0F0F0;--text2:#A0A0A0;--text3:#505050;
+  --border:rgba(255,255,255,0.07);--borderg:rgba(201,168,76,0.22);
+  --r:16px;--rsm:12px;--rxs:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;min-height:100vh;overflow-x:hidden;}
+@keyframes fU{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes success{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+.screen{display:none;min-height:100vh;flex-direction:column;animation:fU .35s ease both;}
+.screen.active{display:flex;}
+
+.btn{display:block;width:100%;padding:15px;border:none;border-radius:var(--rsm);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn:active{transform:scale(.97);}
+.btn-gold{background:linear-gradient(135deg,#9A6800,var(--gold),var(--gl));color:#000;}
+.btn-dark{background:var(--card2);color:var(--text);border:1px solid var(--border);}
+.btn-green{background:rgba(76,175,125,.15);color:var(--green);border:1px solid rgba(76,175,125,.3);}
+.btn-sm{padding:8px 14px;font-size:12px;border-radius:var(--rxs);}
+
+.top-bar{padding:52px 20px 16px;display:flex;align-items:center;justify-content:space-between;}
+.top-title{font-size:26px;font-weight:700;letter-spacing:-.5px;}
+.top-right{display:flex;align-items:center;gap:10px;}
+.top-badge{padding:5px 12px;background:var(--gd);border:1px solid var(--borderg);border-radius:20px;font-size:11px;font-weight:600;color:var(--gold);}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+.sec-title{font-size:17px;font-weight:700;margin-bottom:12px;}
+.label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.inp{width:100%;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rxs);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s;-webkit-appearance:none;margin-bottom:10px;}
+.inp:focus{border-color:var(--gold);}
+.inp::placeholder{color:var(--text3);}
+
+/* LOADING */
+#s-loading{background:var(--bg);align-items:center;justify-content:center;text-align:center;gap:16px;}
+.ring{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
+
+/* LOGIN */
+#s-login{background:var(--bg);align-items:center;justify-content:center;padding:40px 24px;}
+.logo-wrap{text-align:center;margin-bottom:32px;}
+.logo-brand{font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--gold);font-style:italic;}
+.logo-tag{font-size:12px;color:var(--text2);letter-spacing:2px;margin-top:4px;}
+.login-card{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;}
+.admin-lnk{text-align:center;margin-top:14px;font-size:11px;color:var(--text3);cursor:pointer;letter-spacing:1px;}
+
+/* HOME */
+#s-home{background:var(--bg);}
+.hero{margin:0 16px 16px;padding:22px;border-radius:var(--r);background:linear-gradient(135deg,#1A1200,#2A1E00,#1A1200);border:1px solid var(--borderg);position:relative;overflow:hidden;}
+.hero-glow{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.1),transparent);top:-50px;right:-50px;pointer-events:none;}
+.hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.hero-brand{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.lvl{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;}
+.lv0{background:rgba(205,127,50,.2);color:#E8A850;border:1px solid rgba(205,127,50,.3);}
+.lv1{background:rgba(192,192,192,.15);color:#C8C8C8;border:1px solid rgba(192,192,192,.25);}
+.lv2{background:rgba(255,215,0,.15);color:#FFD700;border:1px solid rgba(255,215,0,.25);}
+.lv3{background:rgba(180,120,255,.15);color:#B47FFF;border:1px solid rgba(180,120,255,.25);}
+.hero-name{font-size:13px;color:var(--text2);margin-bottom:4px;}
+.hero-pts{font-size:52px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-2px;}
+.hero-lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+.prog{margin-top:16px;}
+.prog-info{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:6px;}
+.prog-track{height:4px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gl));border-radius:10px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+.rw-row{display:flex;gap:8px;overflow-x:auto;padding:0 16px 4px;scroll-snap-type:x mandatory;}
+.rw-row::-webkit-scrollbar{display:none;}
+.rw{min-width:128px;scroll-snap-align:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);padding:14px;flex-shrink:0;}
+.rw-ico{font-size:22px;margin-bottom:6px;}
+.rw-name{font-size:12px;font-weight:600;margin-bottom:2px;}
+.rw-pts{font-size:10px;color:var(--text2);}
+.rw-bar{height:3px;background:rgba(255,255,255,.06);border-radius:10px;margin-top:8px;overflow:hidden;}
+.rw-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gl));border-radius:10px;}
+
+.histo{padding:16px 16px 0;}
+.hi{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.hi:last-child{border-bottom:none;}
+.hi-ico{width:36px;height:36px;border-radius:var(--rxs);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.hi-scan{background:var(--gdim);}
+.hi-info{flex:1;}
+.hi-t{font-size:13px;font-weight:500;}
+.hi-d{font-size:11px;color:var(--text3);margin-top:1px;}
+.hi-badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;background:var(--gdim);color:var(--green);}
+
+/* SCANNER QR */
+#s-scan{background:var(--bg);}
+.scan-info{padding:0 16px 16px;}
+.scan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;text-align:center;}
+.scan-icon{font-size:52px;margin-bottom:16px;}
+.scan-title{font-size:20px;font-weight:700;margin-bottom:8px;}
+.scan-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px;}
+.scan-input-row{display:flex;gap:8px;margin-bottom:12px;}
+.scan-inp{flex:1;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rxs);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;outline:none;text-transform:uppercase;letter-spacing:2px;}
+.scan-inp:focus{border-color:var(--gold);}
+.scan-inp::placeholder{color:var(--text3);text-transform:none;letter-spacing:0;}
+.result-card{margin-top:16px;padding:18px;border-radius:var(--rsm);text-align:center;display:none;}
+.result-success{background:var(--gdim);border:1px solid rgba(76,175,125,.3);}
+.result-error{background:var(--rdim);border:1px solid rgba(255,107,107,.25);}
+.result-icon{font-size:40px;margin-bottom:10px;}
+.result-title{font-size:18px;font-weight:700;margin-bottom:4px;}
+.result-sub{font-size:13px;color:var(--text2);}
+.pts-anim{font-size:36px;font-weight:700;color:var(--green);animation:success .5s ease;}
+
+/* PIN */
+#s-pin{background:var(--bg);align-items:center;justify-content:center;padding:40px 28px;}
+.pin-wrap{width:100%;max-width:300px;text-align:center;}
+.pin-title{font-size:22px;font-weight:700;margin-bottom:6px;}
+.pin-sub{font-size:13px;color:var(--text2);margin-bottom:28px;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:28px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--borderg);transition:background .15s;}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pk{padding:18px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);font-size:22px;font-weight:600;cursor:pointer;transition:all .15s;}
+.pk:active{background:var(--card2);transform:scale(.95);}
+
+/* ADMIN */
+#s-admin{background:var(--bg);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 16px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);padding:14px;text-align:center;}
+.stat-n{font-size:28px;font-weight:700;color:var(--gold);}
+.stat-l{font-size:10px;color:var(--text2);margin-top:2px;}
+
+.client-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.client-row:last-child{border-bottom:none;}
+.cr-av{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#000;flex-shrink:0;background:linear-gradient(135deg,#9A6800,#C9A84C);}
+.cr-info{flex:1;}
+.cr-name{font-size:13px;font-weight:600;}
+.cr-meta{font-size:10px;color:var(--text2);margin-top:1px;}
+.cr-pts{font-size:20px;font-weight:700;color:var(--gold);}
+.mini-btns{display:flex;gap:5px;margin-top:5px;}
+.mini-btn{padding:4px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;}
+.mini-btn.neg{color:var(--red);}
+
+/* QR GENERATOR */
+.gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.qr-chip{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rxs);padding:10px;text-align:center;cursor:pointer;transition:all .15s;}
+.qr-chip.sel{border-color:var(--gold);background:var(--gd);}
+.qrc-g{font-size:16px;font-weight:700;}
+.qrc-pt{font-size:10px;color:var(--gold);margin-top:2px;}
+.gen-result{margin-top:16px;display:none;}
+.qr-list{display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;}
+.qr-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rxs);padding:12px;display:flex;align-items:center;gap:12px;}
+.qi-qr{flex-shrink:0;}
+.qi-info{flex:1;}
+.qi-code{font-family:monospace;font-size:11px;color:var(--gold);letter-spacing:1px;}
+.qi-status{font-size:10px;color:var(--text3);margin-top:2px;}
+.qi-status.used{color:var(--red);}
+
+/* NAV */
+.cnav{position:sticky;bottom:0;background:rgba(15,15,15,.93);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:10px 0 20px;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);padding:6px 0;transition:color .15s;}
+.nb svg{width:20px;height:20px;}
+.nb.on{color:var(--gold);}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:16px;right:16px;max-width:398px;margin:0 auto;background:var(--bg3);border:1px solid var(--borderg);border-radius:var(--rsm);padding:13px 16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;z-index:9999;transform:translateY(16px);opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.toast.on{transform:translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"><span id="ti"></span><span id="tm"></span></div>
+
+<!-- LOADING -->
+<div class="screen active" id="s-loading">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px;">
+    <div class="ring"></div>
+    <div style="font-size:14px;color:var(--text2);">Origin CBD — Connexion…</div>
+  </div>
+</div>
+
+<!-- AGE CHECK -->
+<div class="screen" id="s-age">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 28px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:16px;">🔞</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold);font-style:italic;margin-bottom:6px;">Origin CBD</div>
+    <div style="font-size:12px;color:var(--text2);letter-spacing:2px;margin-bottom:32px;">— L'origine du bien-être —</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px;width:100%;max-width:340px;">
+      <div style="font-size:22px;font-weight:700;margin-bottom:8px;">Vérification d'âge</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px;">
+        Ce site est réservé aux personnes<br>
+        <strong style="color:var(--gold);font-size:16px;">majeures (+18 ans).</strong><br><br>
+        En continuant, vous confirmez avoir<br>18 ans ou plus.
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;background:var(--bg3);padding:12px;border-radius:var(--rxs);cursor:pointer;" onclick="toggleAge(this)">
+        <div id="age-check" style="width:22px;height:22px;border:2px solid var(--borderg);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+        <div style="font-size:13px;color:var(--text);text-align:left;">J'ai 18 ans ou plus et j'accepte les conditions d'utilisation</div>
+      </div>
+      <button class="btn btn-gold" id="age-btn" onclick="confirmAge()" style="opacity:.4;pointer-events:none;">
+        Entrer sur le site →
+      </button>
+      <div style="margin-top:14px;font-size:11px;color:var(--text3);line-height:1.5;">
+        ⚠️ La vente de CBD est interdite aux mineurs.<br>THC &lt; 0,3% — Conforme à la législation française.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="s-login">
+  <div class="logo-wrap" style="margin-top:60px;">
+    <div class="logo-brand">Origin CBD</div>
+    <div class="logo-tag">— L'origine du bien-être —</div>
+  </div>
+  <div style="padding:24px;">
+    <div class="login-card">
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Bienvenue 👋</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Scannez vos pochons et cumulez des points</div>
+      <input class="inp" id="l-prenom" type="text" placeholder="Votre prénom">
+      <input class="inp" id="l-email" type="email" placeholder="Votre email">
+      <button class="btn btn-gold" onclick="login()">Accéder à mes points →</button>
+    </div>
+    <div class="admin-lnk" onclick="goTo('s-pin')">⚙ Accès gérant</div>
+  </div>
+
+  <div style="margin:12px 0 0;padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+    <div style="font-size:13px;flex-shrink:0;">🎁</div>
+    <div style="font-size:11px;color:var(--text3);line-height:1.4;">1 000 pochons achetés → <span style="color:var(--gold);">100 Zézette 1,5g offerts</span></div>
+  </div>
+
+  <div id="install-hint" style="margin:16px 0 0;padding:14px 16px;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);border-radius:12px;display:flex;align-items:center;gap:12px;">
+    <div style="font-size:22px;flex-shrink:0;">📲</div>
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;">Accès instantané à vos avantages</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.5;">Pochons, offres exclusives et récompenses — tout depuis votre écran d'accueil.</div>
+      <div style="font-size:11px;color:var(--gold);margin-top:6px;cursor:pointer;font-weight:500;" onclick="showInstallGuide()">Installer l'app →</div>
+    </div>
+  </div>
+</div>
+
+<!-- Guide installation -->
+<div id="install-guide" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.75);align-items:flex-end;">
+  <div style="width:100%;max-width:430px;background:#161616;border-radius:24px 24px 0 0;border-top:1px solid rgba(201,168,76,0.2);padding:0 0 40px;">
+    <div style="width:36px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin:14px auto;"></div>
+    <div style="padding:0 20px;">
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Installer l'app</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Accédez à vos points en 1 tap depuis votre écran d'accueil.</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px;">🤖 Android (Chrome)</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:22px;height:22px;border-radius:50%;background:var(--gd);border:1px solid var(--borderg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">1</div><div style="font-size:12px;color:var(--text2);padding-top:3px;">Appuyez sur les <strong style="color:var(--text);">⋮</strong> en haut à droite de Chrome</div></div>
+          <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:22px;height:22px;border-radius:50%;background:var(--gd);border:1px solid var(--borderg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">2</div><div style="font-size:12px;color:var(--text2);padding-top:3px;">Appuyez sur <strong style="color:var(--text);">"Ajouter à l'écran d'accueil"</strong></div></div>
+          <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:22px;height:22px;border-radius:50%;background:var(--gd);border:1px solid var(--borderg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">3</div><div style="font-size:12px;color:var(--text2);padding-top:3px;">Confirmez → <strong style="color:var(--green);">✓ Installé !</strong></div></div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px;">🍎 iPhone (Safari)</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:22px;height:22px;border-radius:50%;background:var(--gd);border:1px solid var(--borderg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">1</div><div style="font-size:12px;color:var(--text2);padding-top:3px;">Ouvrez le lien dans <strong style="color:var(--text);">Safari</strong> (pas Chrome)</div></div>
+          <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:22px;height:22px;border-radius:50%;background:var(--gd);border:1px solid var(--borderg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">2</div><div style="font-size:12px;color:var(--text2);padding-top:3px;">Appuyez sur <strong style="color:var(--text);">⬆ Partager</strong> en bas de l'écran</div></div>
+          <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:22px;height:22px;border-radius:50%;background:var(--gd);border:1px solid var(--borderg);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">3</div><div style="font-size:12px;color:var(--text2);padding-top:3px;">Choisissez <strong style="color:var(--text);">"Sur l'écran d'accueil"</strong> → Ajouter</div></div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('install-guide').style.display='none'" style="width:100%;padding:15px;background:linear-gradient(135deg,#9A6800,var(--gold),var(--gl));border:none;border-radius:12px;font-size:14px;font-weight:700;color:#000;cursor:pointer;">Compris ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME CLIENT -->
+<div class="screen" id="s-home">
+  <div class="top-bar">
+    <div class="top-title">Mes Points</div>
+    <div class="top-badge">Origin CBD</div>
+  </div>
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-top">
+      <div class="hero-brand">Programme Fidélité</div>
+      <div class="lvl lv0" id="h-lv">🥉 Bronze</div>
+    </div>
+    <div class="hero-name" id="h-name">—</div>
+    <div class="hero-pts" id="h-pts">0</div>
+    <div class="hero-lbl">points fidélité</div>
+    <div class="prog">
+      <div class="prog-info"><span id="h-cur">Bronze</span><span id="h-nxt">100 pts → Argent</span></div>
+      <div class="prog-track"><div class="prog-fill" id="h-prog" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 10px;"><div style="font-size:14px;font-weight:700;margin-bottom:10px;">🎁 Récompenses</div></div>
+  <div class="rw-row">
+    <div class="rw"><div class="rw-ico">🌿</div><div class="rw-name">3g offerts</div><div class="rw-pts">100 pts</div><div class="rw-bar"><div class="rw-fill" id="rw1" style="width:0%"></div></div></div>
+    <div class="rw"><div class="rw-ico">🎁</div><div class="rw-name">Sachet offert</div><div class="rw-pts">200 pts</div><div class="rw-bar"><div class="rw-fill" id="rw2" style="width:0%"></div></div></div>
+    <div class="rw"><div class="rw-ico">⭐</div><div class="rw-name">-10% commande</div><div class="rw-pts">500 pts</div><div class="rw-bar"><div class="rw-fill" style="width:0%"></div></div></div>
+    <div class="rw"><div class="rw-ico">👑</div><div class="rw-name">Box VIP</div><div class="rw-pts">1000 pts</div><div class="rw-bar"><div class="rw-fill" style="width:0%"></div></div></div>
+  </div>
+
+  <div class="histo">
+    <div style="font-size:14px;font-weight:700;margin-bottom:10px;">📋 Historique</div>
+    <div id="h-histo"><div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">Scannez votre premier pochon !</div></div>
+  </div>
+  <div style="height:20px;"></div>
+
+  <div class="cnav">
+    <button class="nb on" id="nb-pts" onclick="nb(this,'s-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Points</button>
+    <button class="nb" id="nb-scan" onclick="nb(this,'s-scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Scanner</button>
+    <button class="nb" onclick="nb(this,'s-pro')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>Pro</button>
+    <button class="nb" onclick="logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Quitter</button>
+  </div>
+</div>
+
+<!-- ESPACE PRO -->
+<div class="screen" id="s-pro">
+  <div class="top-bar"><button onclick="nb(document.getElementById('nb-pts'),'s-home')" style="background:none;border:none;color:var(--gold);font-size:22px;cursor:pointer;padding:0 10px 0 0;">‹</button><div class="top-title">Espace Pro</div></div>
+
+  <div style="margin:0 16px 14px;padding:18px;background:linear-gradient(135deg,#1A1200,#2A1E00);border:1px solid var(--borderg);border-radius:var(--r);">
+    <div style="font-size:11px;font-weight:600;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Origin CBD — Partenariat</div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;">Devenez revendeur 🤝</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.6;">Solution clé en main pour bureaux de tabac et points de vente. Aucun investissement lourd, marge attractive.</div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+      <div style="padding:4px 12px;background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.25);border-radius:20px;font-size:10px;font-weight:600;color:var(--green);">✅ THC &lt; 0,3%</div>
+      <div style="padding:4px 12px;background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.25);border-radius:20px;font-size:10px;font-weight:600;color:var(--green);">✅ Traçabilité complète</div>
+      <div style="padding:4px 12px;background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.25);border-radius:20px;font-size:10px;font-weight:600;color:var(--green);">✅ Reprise invendus 3 mois</div>
+    </div>
+  </div>
+
+  <div style="margin:0 16px 14px;padding:14px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);border-radius:var(--rsm);">
+    <div style="font-size:13px;font-weight:700;color:#FFD700;">💥 Offre exclusive</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5;">À partir de <strong style="color:var(--gl)">1 000 sachets achetés</strong> : <strong style="color:var(--gl)">100 sachets Zézette 1,5g offerts !</strong></div>
+  </div>
+
+  <div style="padding:0 16px 14px;">
+    <div style="font-size:17px;font-weight:700;margin-bottom:12px;">📦 Catalogue produits 2026</div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#ff9ff3,#ffeaa7,#74b9ff);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;">PROMO</div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Zézette "vous aide"</div></div>
+        <div style="color:var(--text3);font-size:18px;transition:transform .2s;">›</div>
+      </div>
+      <div class="pro-body" style="display:none;padding:0 16px 16px;border-top:1px solid var(--border);">
+        <div style="margin-top:12px;"><div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Prix d'achat → Vente conseillée</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">1,5g</span><span style="font-size:13px;color:var(--text2);">2€ <span style="color:var(--green);">→ 4€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">3,5g</span><span style="font-size:13px;color:var(--text2);">5€ <span style="color:var(--green);">→ 10€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">7g</span><span style="font-size:13px;color:var(--text2);">9€ <span style="color:var(--green);">→ 20€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">10g</span><span style="font-size:13px;color:var(--text2);">12€ <span style="color:var(--green);">→ 25€</span></span></div>
+        </div>
+        <div style="margin-top:10px;padding:10px;background:var(--gd);border-radius:var(--rxs);font-size:11px;color:var(--text2);">Fleurs aux reflets verts/violets. Excellent rapport qualité/prix.</div></div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#8B4513,#CD7F32);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;">CBD</div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Bronze Edition</div></div>
+        <div style="color:var(--text3);font-size:18px;">›</div>
+      </div>
+      <div class="pro-body" style="display:none;padding:0 16px 16px;border-top:1px solid var(--border);">
+        <div style="margin-top:12px;"><div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Prix achat → Vente conseillée (Fleurs & Résine)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">1g</span><span style="font-size:13px;color:var(--text2);">2€ <span style="color:var(--green);">→ 4€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">3g</span><span style="font-size:13px;color:var(--text2);">5€ <span style="color:var(--green);">→ 10€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">5g</span><span style="font-size:13px;color:var(--text2);">9€ <span style="color:var(--green);">→ 20€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">10g</span><span style="font-size:13px;color:var(--text2);">18€ <span style="color:var(--green);">→ 30€</span></span></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#708090,#C0C0C0);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;">CBN+</div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Silver Edition CBN+</div></div>
+        <div style="color:var(--text3);font-size:18px;">›</div>
+      </div>
+      <div class="pro-body" style="display:none;padding:0 16px 16px;border-top:1px solid var(--border);">
+        <div style="margin-top:12px;">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Fleurs CBN+ — Achat → Vente</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">1g</span><span style="font-size:13px;color:var(--text2);">3€ <span style="color:var(--green);">→ 6€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">3g</span><span style="font-size:13px;color:var(--text2);">8€ <span style="color:var(--green);">→ 20€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">5g</span><span style="font-size:13px;color:var(--text2);">13€ <span style="color:var(--green);">→ 30€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">10g</span><span style="font-size:13px;color:var(--text2);">20€ <span style="color:var(--green);">→ 40€</span></span></div>
+          </div>
+          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:10px 0 8px;">Résine CBN+ 2x filtrée — Achat → Vente</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">1g</span><span style="font-size:13px;color:var(--text2);">3€ <span style="color:var(--green);">→ 6€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">3g</span><span style="font-size:13px;color:var(--text2);">9€ <span style="color:var(--green);">→ 20€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">5g</span><span style="font-size:13px;color:var(--text2);">15€ <span style="color:var(--green);">→ 30€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">10g</span><span style="font-size:13px;color:var(--text2);">30€ <span style="color:var(--green);">→ 50€</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#B8860B,#FFD700);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000;">⭐</div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Gold / Platinum Edition</div></div>
+        <div style="color:var(--text3);font-size:18px;">›</div>
+      </div>
+      <div class="pro-body" style="display:none;padding:0 16px 16px;border-top:1px solid var(--border);">
+        <div style="margin-top:12px;">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Fleurs CBN+ Clown — Achat → Vente</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">1g</span><span style="font-size:13px;color:var(--text2);">4€ <span style="color:var(--green);">→ 8€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">2,7g</span><span style="font-size:13px;color:var(--text2);">10€ <span style="color:var(--green);">→ 20€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">7,14g</span><span style="font-size:13px;color:var(--text2);">25€ <span style="color:var(--green);">→ 50€</span></span></div>
+          </div>
+          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:10px 0 8px;">Résine CBN+ 3x filtrée Gold — Achat → Vente</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">1g</span><span style="font-size:13px;color:var(--text2);">5€ <span style="color:var(--green);">→ 10€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">2,7g</span><span style="font-size:13px;color:var(--text2);">10€ <span style="color:var(--green);">→ 20€</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">7,14g</span><span style="font-size:13px;color:var(--text2);">25€ <span style="color:var(--green);">→ 50€</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#2d5a27,#4CAF50);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;">TRIM</div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Trim, Pré-rolls & Autres</div></div>
+        <div style="color:var(--text3);font-size:18px;">›</div>
+      </div>
+      <div class="pro-body" style="display:none;padding:0 16px 16px;border-top:1px solid var(--border);">
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">Trim CBD 10g</span><span style="font-size:13px;color:var(--text2);">4€ <span style="color:var(--green);">→ 10€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">Trim CBN+ 10g</span><span style="font-size:13px;color:var(--text2);">15€ <span style="color:var(--green);">→ 30€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">Pré-roll CBD</span><span style="font-size:13px;color:var(--text2);">2€ <span style="color:var(--green);">→ 3€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">E-cigarette</span><span style="font-size:13px;color:var(--text2);">15€ <span style="color:var(--green);">→ 30-35€</span></span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--bg3);border-radius:var(--rxs);"><span style="font-size:13px;font-weight:600;">Recharge</span><span style="font-size:13px;color:var(--text2);">10€ <span style="color:var(--green);">→ 20€</span></span></div>
+        </div>
+        <div style="margin-top:10px;padding:10px;background:rgba(76,175,125,.08);border-radius:var(--rxs);font-size:11px;color:var(--text2);">⚡ Très forte demande en boutique CBD. Trim selon disponibilité.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 16px;">
+    <div style="font-size:17px;font-weight:700;margin-bottom:12px;">🤝 Nos formules partenariat</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;">
+        <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4CAF7D,#2ecc71);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;flex-shrink:0;">F1</div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Distributeur Automatique</div></div>
+          <div style="color:var(--text3);font-size:18px;">›</div>
+        </div>
+        <div class="pro-body" style="display:none;padding:0 16px 14px;border-top:1px solid var(--border);">
+          <div style="margin-top:12px;padding:10px;background:var(--gd);border-radius:var(--rxs);text-align:center;font-size:14px;font-weight:700;color:var(--gold);">Vous percevez 30% des bénéfices</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Aucune gestion à effectuer</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Approvisionnement & maintenance pris en charge</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Zéro risque financier</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Versement commissions toutes les 2 semaines</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;">
+        <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#9A6800,var(--gold));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;flex-shrink:0;">F2</div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Revente Directe</div></div>
+          <div style="color:var(--text3);font-size:18px;">›</div>
+        </div>
+        <div class="pro-body" style="display:none;padding:0 16px 14px;border-top:1px solid var(--border);">
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Aucune exclusivité imposée</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Marge jusqu'à ×2 le prix d'achat</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Reprise invendus sous 3 mois</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Commercial disponible (optionnel)</div>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:var(--bg3);border-radius:var(--rxs);font-size:11px;color:var(--text3);">💳 2 premiers paiements différés 30 jours · Ensuite paiement à la commande</div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;">
+        <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3498db,#2980b9);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">F3</div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Distributeur + Revente</div></div>
+          <div style="color:var(--text3);font-size:18px;">›</div>
+        </div>
+        <div class="pro-body" style="display:none;padding:0 16px 14px;border-top:1px solid var(--border);">
+          <div style="margin-top:12px;padding:10px;background:var(--gd);border-radius:var(--rxs);text-align:center;font-size:14px;font-weight:700;color:var(--gold);">40% des bénéfices du distributeur</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Distributeur sans investissement</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Ventes machine + boutique</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Tarifs préférentiels produits</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;">
+        <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="togglePro(this)">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#9b59b6,#8e44ad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">F4</div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:600;">Dépôt / Vente</div></div>
+          <div style="color:var(--text3);font-size:18px;">›</div>
+        </div>
+        <div class="pro-body" style="display:none;padding:0 16px 14px;border-top:1px solid var(--border);">
+          <div style="margin-top:12px;padding:10px;background:var(--gd);border-radius:var(--rxs);text-align:center;font-size:14px;font-weight:700;color:var(--gold);">50 / 50 des bénéfices</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Vous payez uniquement ce que vous vendez</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Solution sécurisée — test facile</div>
+            <div style="display:flex;gap:8px;font-size:12px;color:var(--text2);"><span style="color:var(--green);">✓</span>Reprise invendus sous 3 mois</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin:0 16px 32px;padding:18px;background:var(--gd);border:1px solid var(--borderg);border-radius:var(--r);">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px;">📩 Intéressé ? Contactez-nous</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px;">📍 World Trade Center, 2 Bd Euromediterranée, 13002 Marseille<br>✉️ origincbd1900@gmail.com</div>
+    <button class="btn btn-gold" onclick="window.location='mailto:origincbd1900@gmail.com?subject=Demande partenariat Origin CBD'">Envoyer un email →</button>
+  </div>
+
+  <div class="cnav">
+    <button class="nb" onclick="nb(this,'s-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Points</button>
+    <button class="nb" onclick="nb(this,'s-scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Scanner</button>
+    <button class="nb on" onclick="nb(this,'s-pro')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>Pro</button>
+    <button class="nb" onclick="logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Quitter</button>
+  </div>
+</div>
+
+<!-- SCAN POCHON -->
+<div class="screen" id="s-scan">
+  <div class="top-bar"><button onclick="nb(document.getElementById('nb-pts'),'s-home')" style="background:none;border:none;color:var(--gold);font-size:22px;cursor:pointer;padding:0 10px 0 0;">‹</button><div class="top-title">Scanner</div></div>
+  <div class="scan-info">
+    <div class="scan-card">
+      <div class="scan-icon">📦</div>
+      <div class="scan-title">Trouvez le code sur votre pochon</div>
+      <div class="scan-sub">Chaque pochon Origin CBD contient un code unique imprimé sur l'emballage. Entrez-le ci-dessous pour gagner vos points.</div>
+      <div class="scan-input-row">
+        <input class="scan-inp" id="scan-inp" placeholder="Ex: OCBD-3G-A7K2" maxlength="20">
+        <button class="btn btn-gold btn-sm" style="width:auto;white-space:nowrap;" onclick="doScan()">Valider</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);">Le code se trouve sous l'emballage du pochon</div>
+      <div class="result-card result-success" id="res-ok">
+        <div class="result-icon">✅</div>
+        <div class="pts-anim" id="res-pts">+0 pts</div>
+        <div class="result-title">Points ajoutés !</div>
+        <div class="result-sub" id="res-sub">Votre pochon a bien été validé</div>
+      </div>
+      <div class="result-card result-error" id="res-err">
+        <div class="result-icon" id="res-err-ico">❌</div>
+        <div class="result-title" id="res-err-title">Code invalide</div>
+        <div class="result-sub" id="res-err-sub">Ce code n'existe pas ou a déjà été utilisé</div>
+      </div>
+    </div>
+  </div>
+  <div class="cnav">
+    <button class="nb" onclick="nb(this,'s-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Points</button>
+    <button class="nb on" onclick="nb(this,'s-scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Scanner</button>
+    <button class="nb" onclick="logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Quitter</button>
+  </div>
+</div>
+
+<!-- PIN -->
+<div class="screen" id="s-pin">
+  <div class="pin-wrap" style="margin:auto;">
+    <div class="pin-title">Accès Gérant</div>
+    <div class="pin-sub">Entrez votre code PIN</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+      <div class="pin-dot" id="pd4"></div><div class="pin-dot" id="pd5"></div>
+    </div>
+    <div class="pin-pad">
+      <div class="pk" onclick="pk('1')">1</div><div class="pk" onclick="pk('2')">2</div><div class="pk" onclick="pk('3')">3</div>
+      <div class="pk" onclick="pk('4')">4</div><div class="pk" onclick="pk('5')">5</div><div class="pk" onclick="pk('6')">6</div>
+      <div class="pk" onclick="pk('7')">7</div><div class="pk" onclick="pk('8')">8</div><div class="pk" onclick="pk('9')">9</div>
+      <div class="pk" style="font-size:14px;color:var(--text3);" onclick="goTo('s-login')">✕</div>
+      <div class="pk" onclick="pk('0')">0</div>
+      <div class="pk" style="font-size:16px;" onclick="pkDel()">⌫</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="s-admin">
+  <div class="top-bar">
+    <button onclick="goTo('s-login')" style="background:none;border:none;color:var(--gold);font-size:22px;cursor:pointer;padding:0 10px 0 0;">‹</button>
+    <div class="top-title">Gérant</div>
+    <button onclick="goTo('s-login')" style="background:none;border:none;font-size:11px;color:var(--text3);cursor:pointer;letter-spacing:.5px;">Déco.</button>
+  </div>
+  <div class="stat-grid">
+    <div class="stat"><div class="stat-n" id="a-cl">0</div><div class="stat-l">Clients</div></div>
+    <div class="stat"><div class="stat-n" id="a-pts">0</div><div class="stat-l">Points total</div></div>
+    <div class="stat"><div class="stat-n" id="a-qr-dispo">0</div><div class="stat-l">QR disponibles</div></div>
+    <div class="stat"><div class="stat-n" id="a-qr-used">0</div><div class="stat-l">QR utilisés</div></div>
+  </div>
+
+  <div style="padding:0 16px 16px;">
+    <div class="sec-title">🖨 Générer des QR codes</div>
+    <div class="card">
+      <div class="label">Choisir le grammage</div>
+      <div class="gen-grid">
+        <div class="qr-chip" onclick="selGenGram(this,'1g',1)"><div class="qrc-g">1g</div><div class="qrc-pt">+1 pt</div></div>
+        <div class="qr-chip" onclick="selGenGram(this,'1.5g',1)"><div class="qrc-g">1,5g</div><div class="qrc-pt">+1 pt</div></div>
+        <div class="qr-chip" onclick="selGenGram(this,'2.7g',2)"><div class="qrc-g">2,7g</div><div class="qrc-pt">+2 pts</div></div>
+        <div class="qr-chip" onclick="selGenGram(this,'3g',3)"><div class="qrc-g">3g</div><div class="qrc-pt">+3 pts</div></div>
+        <div class="qr-chip" onclick="selGenGram(this,'3.5g',3)"><div class="qrc-g">3,5g</div><div class="qrc-pt">+3 pts</div></div>
+        <div class="qr-chip" onclick="selGenGram(this,'5g',5)"><div class="qrc-g">5g</div><div class="qrc-pt">+5 pts</div></div>
+        <div class="qr-chip" onclick="selGenGram(this,'7g',7)"><div class="qrc-g">7g</div><div class="qrc-pt">+7 pts</div></div>
+        <div class="qr-chip" onclick="selGenGram(this,'10g',10)"><div class="qrc-g">10g</div><div class="qrc-pt">+10 pts</div></div>
+      </div>
+
+      <div style="margin-top:10px;margin-bottom:10px;">
+        <div class="label">Quantité (1–200)</div>
+        <input class="inp" id="gen-qty" type="number" min="1" max="200" value="10" style="margin-bottom:8px;">
+        <button class="btn btn-gold btn-sm" style="width:auto;" onclick="generateQRs()">Générer</button>
+      </div>
+
+      <div style="padding:12px;background:rgba(76,175,125,0.08);border:1px solid rgba(76,175,125,0.2);border-radius:var(--rxs);font-size:11px;color:var(--text2);line-height:1.6;">
+        <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:5px;">💡 Conseil impression</div>
+        Achetez des <strong style="color:var(--text);">feuilles autocollantes A4</strong> en papeterie ou sur Amazon.<br>
+        Imprimez → découpez → collez sur le dos du pochon avant fermeture. ✅
+      </div>
+
+      <div class="gen-result" id="gen-result">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;" id="gen-title">Codes générés</div>
+          <button class="btn btn-green btn-sm" style="width:auto;" onclick="printQRs()">🖨 Imprimer</button>
+        </div>
+        <div class="qr-list" id="qr-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div class="sec-title" style="margin:0;">👥 Clients</div>
+      <button class="btn btn-dark btn-sm" style="width:auto;" onclick="loadAdmin()">🔄</button>
+    </div>
+    <div id="a-clients" class="card">
+      <div style="text-align:center;color:var(--text3);font-size:13px;padding:12px;">Chargement…</div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px 24px;display:flex;flex-direction:column;gap:8px;">
+    <button class="btn btn-dark" onclick="exportCSV()">📥 Exporter clients (CSV)</button>
+  </div>
+</div>
+
+<script>
+const ADMIN_PIN = '063535';
+const LEVELS = [
+  {name:'Bronze',icon:'🥉',cls:'lv0',min:0,max:100},
+  {name:'Argent',icon:'✦',cls:'lv1',min:100,max:300},
+  {name:'Or',icon:'⭐',cls:'lv2',min:300,max:600},
+  {name:'VIP',icon:'👑',cls:'lv3',min:600,max:1000},
+];
+
+let user=null, db, fn, pinEntry='', genGram=null, genPts=0, generatedCodes=[];
+
+function showInstallGuide(){
+  const g=document.getElementById('install-guide');
+  g.style.display='flex';
+}
+
+let ageChecked = false;
+function toggleAge(el){
+  ageChecked = !ageChecked;
+  const box = document.getElementById('age-check');
+  const btn = document.getElementById('age-btn');
+  box.innerHTML = ageChecked ? '✓' : '';
+  box.style.background = ageChecked ? 'var(--gold)' : 'transparent';
+  box.style.color = '#000';
+  btn.style.opacity = ageChecked ? '1' : '.4';
+  btn.style.pointerEvents = ageChecked ? 'auto' : 'none';
+}
+function confirmAge(){
+  if(!ageChecked) return;
+  sessionStorage.setItem('age-ok','1');
+  goTo('s-login');
+}
+
+window.addEventListener('dbready',()=>{
+  db=window._db; fn=window._fn;
+  const ok = sessionStorage.getItem('age-ok');
+  setTimeout(()=>goTo(ok?'s-login':'s-age'),600);
+});
+setTimeout(()=>{
+  if(!window._ready){
+    const ok = sessionStorage.getItem('age-ok');
+    goTo(ok?'s-login':'s-age');
+  }
+},4000);
+
+function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function nb(btn,id){goTo(id);document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');}
+
+function getLv(p){for(let i=LEVELS.length-1;i>=0;i--)if(p>=LEVELS[i].min)return LEVELS[i];return LEVELS[0];}
+function getNx(p){for(const l of LEVELS)if(p<l.max)return l;return LEVELS[LEVELS.length-1];}
+
+async function login(){
+  const prenom=document.getElementById('l-prenom').value.trim();
+  const email=document.getElementById('l-email').value.trim();
+  if(!prenom||!email){toast('⚠️','Remplissez tous les champs');return;}
+  toast('⏳','Connexion…');
+  try{
+    const id=email.replace(/[^a-z0-9]/gi,'_').toLowerCase();
+    const ref=fn.doc(db,'clients',id);
+    const snap=await fn.getDoc(ref);
+    if(snap.exists()){user={id,...snap.data()};}
+    else{user={id,prenom,email,pts:0,scans:0,history:[],createdAt:new Date().toISOString()};await fn.setDoc(ref,user);}
+    updateHome();
+    goTo('s-home');
+    toast('👋','Bonjour '+user.prenom+' !');
+  }catch(e){toast('❌','Erreur connexion');}
+}
+function logout(){user=null;goTo('s-login');document.getElementById('scan-inp').value='';hideResults();}
+
+function updateHome(){
+  if(!user)return;
+  const pts=user.pts||0, lv=getLv(pts), nx=getNx(pts);
+  const pct=Math.min(((pts-lv.min)/(lv.max-lv.min))*100,100);
+  document.getElementById('h-name').textContent=user.prenom;
+  document.getElementById('h-pts').textContent=pts;
+  document.getElementById('h-lv').textContent=lv.icon+' '+lv.name;
+  document.getElementById('h-lv').className='lvl '+lv.cls;
+  document.getElementById('h-cur').textContent=lv.name;
+  document.getElementById('h-nxt').textContent=Math.max(0,nx.max-pts)+' pts → '+nx.name;
+  document.getElementById('h-prog').style.width=pct+'%';
+  document.getElementById('rw1').style.width=Math.min(pts,100)+'%';
+  document.getElementById('rw2').style.width=Math.min(pts/2,100)+'%';
+  const h=user.history||[];
+  const hl=document.getElementById('h-histo');
+  hl.innerHTML=h.length?h.slice().reverse().slice(0,8).map(x=>`
+    <div class="hi"><div class="hi-ico hi-scan">📦</div>
+    <div class="hi-info"><div class="hi-t">${x.desc}</div><div class="hi-d">${x.date}</div></div>
+    <div class="hi-badge">+${x.pts} pts</div></div>`).join('')
+    :'<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">Scannez votre premier pochon !</div>';
+}
+
+function hideResults(){
+  document.getElementById('res-ok').style.display='none';
+  document.getElementById('res-err').style.display='none';
+}
+
+async function doScan(){
+  const code=document.getElementById('scan-inp').value.trim().toUpperCase();
+  if(!code){toast('⚠️','Entrez un code');return;}
+  if(!user){toast('⚠️','Connectez-vous d\'abord');return;}
+  hideResults();
+  toast('⏳','Vérification…');
+  try{
+    const ref=fn.doc(db,'qr_codes',code);
+    const snap=await fn.getDoc(ref);
+    if(!snap.exists()){showError('❌','Code invalide','Ce code n\'existe pas. Vérifiez l\'orthographe.');return;}
+    const data=snap.data();
+    if(data.used){showError('🚫','Code déjà utilisé','Ce pochon a déjà été scanné. Chaque code est à usage unique.');return;}
+    const pts=data.pts||1;
+    const gram=data.gram||'?';
+    const oldLv=getLv(user.pts||0).name;
+    await fn.updateDoc(ref,{used:true,usedBy:user.id,usedAt:new Date().toISOString()});
+    const hist=user.history||[];
+    hist.push({desc:'Pochon '+gram+' scanné',pts,date:new Date().toLocaleDateString('fr-FR')});
+    const newPts=(user.pts||0)+pts;
+    const clientRef=fn.doc(db,'clients',user.id);
+    await fn.updateDoc(clientRef,{pts:fn.increment(pts),scans:fn.increment(1),history:hist});
+    user.pts=newPts; user.scans=(user.scans||0)+1; user.history=hist;
+    updateHome();
+    document.getElementById('res-pts').textContent='+'+pts+' point'+(pts>1?'s':'');
+    document.getElementById('res-sub').textContent='Pochon '+gram+' validé · Vous avez maintenant '+newPts+' points';
+    document.getElementById('res-ok').style.display='block';
+    document.getElementById('scan-inp').value='';
+    const newLv=getLv(newPts).name;
+    if(newLv!==oldLv) toast('🎉','Niveau '+newLv+' atteint !');
+    else toast('✅','+'+pts+' points ajoutés !');
+  }catch(e){toast('❌','Erreur : '+e.message);}
+}
+
+function showError(ico,title,sub){
+  document.getElementById('res-err-ico').textContent=ico;
+  document.getElementById('res-err-title').textContent=title;
+  document.getElementById('res-err-sub').textContent=sub;
+  document.getElementById('res-err').style.display='block';
+  toast('❌',title);
+}
+
+function pk(k){
+  if(pinEntry.length>=6)return;
+  pinEntry+=k;
+  document.getElementById('pd'+(pinEntry.length-1)).classList.add('filled');
+  if(pinEntry.length===6){
+    if(pinEntry===ADMIN_PIN){setTimeout(()=>{goTo('s-admin');loadAdmin();pinReset();},300);}
+    else{setTimeout(()=>{toast('❌','Code incorrect');pinReset();},300);}
+  }
+}
+function pkDel(){if(!pinEntry.length)return;document.getElementById('pd'+(pinEntry.length-1)).classList.remove('filled');pinEntry=pinEntry.slice(0,-1);}
+function pinReset(){pinEntry='';document.querySelectorAll('.pin-dot').forEach(d=>d.classList.remove('filled'));}
+
+async function loadAdmin(){
+  try{
+    const {collection,getDocs}=fn;
+    const cSnap=await getDocs(collection(db,'clients'));
+    const clients=[];
+    cSnap.forEach(d=>clients.push({id:d.id,...d.data()}));
+    document.getElementById('a-cl').textContent=clients.length;
+    document.getElementById('a-pts').textContent=clients.reduce((a,c)=>a+(c.pts||0),0);
+    renderClients(clients);
+    const qrSnap=await getDocs(collection(db,'qr_codes'));
+    let dispo=0,used=0;
+    qrSnap.forEach(d=>{d.data().used?used++:dispo++;});
+    document.getElementById('a-qr-dispo').textContent=dispo;
+    document.getElementById('a-qr-used').textContent=used;
+    toast('✅','Actualisé !');
+  }catch(e){toast('❌','Erreur : '+e.message);}
+}
+
+function renderClients(clients){
+  const el=document.getElementById('a-clients');
+  if(!clients.length){el.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;padding:12px;">Aucun client encore</div>';return;}
+  clients.sort((a,b)=>(b.pts||0)-(a.pts||0));
+  el.innerHTML=clients.map(c=>{
+    const lv=getLv(c.pts||0);
+    return `<div class="client-row">
+      <div class="cr-av">${(c.prenom||'?').charAt(0).toUpperCase()}</div>
+      <div class="cr-info">
+        <div class="cr-name">${c.prenom||'—'}</div>
+        <div class="cr-meta">${lv.icon} ${lv.name} · ${c.scans||0} scans · ${c.email||'—'}</div>
+        <div class="mini-btns">
+          <div class="mini-btn" onclick="manualPts('${c.id}',10)">+10 pts</div>
+          <div class="mini-btn" onclick="manualPts('${c.id}',5)">+5 pts</div>
+          <div class="mini-btn neg" onclick="manualPts('${c.id}',-5)">-5 pts</div>
+        </div>
+      </div>
+      <div class="cr-pts">${c.pts||0}</div>
+    </div>`;
+  }).join('');
+}
+
+async function manualPts(clientId,pts){
+  try{
+    const ref=fn.doc(db,'clients',clientId);
+    const snap=await fn.getDoc(ref);
+    if(!snap.exists())return;
+    const data=snap.data();
+    const hist=data.history||[];
+    hist.push({desc:'Ajustement gérant',pts,date:new Date().toLocaleDateString('fr-FR')});
+    await fn.updateDoc(ref,{pts:fn.increment(pts),history:hist});
+    toast(pts>0?'✅':'➖',(pts>0?'+':'')+pts+' pts pour '+data.prenom);
+    loadAdmin();
+  }catch(e){toast('❌','Erreur : '+e.message);}
+}
+
+function selGenGram(el,gram,pts){
+  document.querySelectorAll('.qr-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  genGram=gram; genPts=pts;
+}
+
+function uid(){return Math.random().toString(36).substr(2,5).toUpperCase();}
+
+async function generateQRs(){
+  if(!genGram){toast('⚠️','Choisissez un grammage');return;}
+  const qty=parseInt(document.getElementById('gen-qty').value)||0;
+  if(qty<1||qty>200){toast('⚠️','Entre 1 et 200 codes');return;}
+  toast('⏳','Génération de '+qty+' codes…');
+  try{
+    const batch=fn.writeBatch(db);
+    generatedCodes=[];
+    const prefix='OCBD-'+genGram.replace('.','').toUpperCase()+'-';
+    for(let i=0;i<qty;i++){
+      const code=prefix+uid()+uid();
+      const ref=fn.doc(db,'qr_codes',code);
+      batch.set(ref,{gram:genGram,pts:genPts,used:false,createdAt:new Date().toISOString()});
+      generatedCodes.push({code,gram:genGram,pts:genPts});
+    }
+    await batch.commit();
+    renderGenResult();
+    loadAdmin();
+    toast('✅',qty+' codes générés et sauvegardés !');
+  }catch(e){toast('❌','Erreur : '+e.message);}
+}
+
+function renderGenResult(){
+  const el=document.getElementById('qr-list');
+  document.getElementById('gen-title').textContent=generatedCodes.length+' codes — '+genGram+' (+'+genPts+' pts)';
+  el.innerHTML=generatedCodes.map(c=>`
+    <div class="qr-item">
+      <div class="qi-info">
+        <div class="qi-code">${c.code}</div>
+        <div class="qi-status">✅ Prêt à l'emploi · ${c.gram} · +${c.pts} pts</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('gen-result').style.display='block';
+}
+
+function printQRs(){
+  if(!generatedCodes.length){toast('⚠️','Générez des codes d\'abord');return;}
+  const w=window.open('','_blank');
+  const sizes={
+    '1g':{w:'30mm',h:'30mm',label:'Petit pochon ~1g'},
+    '1.5g':{w:'32mm',h:'32mm',label:'Petit pochon ~1,5g'},
+    '2.7g':{w:'35mm',h:'35mm',label:'Pochon ~2,7g'},
+    '3g':{w:'35mm',h:'35mm',label:'Pochon ~3g'},
+    '3.5g':{w:'38mm',h:'38mm',label:'Pochon ~3,5g'},
+    '5g':{w:'40mm',h:'40mm',label:'Doypack 100×80mm'},
+    '7g':{w:'42mm',h:'42mm',label:'Doypack ~7g'},
+    '7.14g':{w:'42mm',h:'42mm',label:'Doypack ~7,14g'},
+    '10g':{w:'50mm',h:'50mm',label:'Doypack 80×135mm'},
+  };
+  const sz=sizes[genGram]||{w:'40mm',h:'40mm',label:genGram};
+  const rows=generatedCodes.map((c,i)=>`
+    <div class="sticker" style="width:${sz.w};height:${sz.h};">
+      <div class="brand">Origin CBD</div>
+      <div id="qr-print-${i}" class="qr-wrap"></div>
+      <div class="gram">${c.gram} · +${c.pts}pt</div>
+      <div class="code">${c.code}</div>
+    </div>`).join('');
+  w.document.write(`<!DOCTYPE html><html><head><title>QR Codes Origin CBD</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Arial',sans-serif;background:#fff;padding:10mm;}
+    h2{font-size:14px;margin-bottom:4px;color:#1a1a1a;}
+    .meta{font-size:11px;color:#666;margin-bottom:8px;}
+    .info-box{background:#fff8e1;border:1px solid #f0c040;padding:8px 12px;border-radius:6px;font-size:11px;margin-bottom:14px;color:#5a3e00;}
+    .grid{display:flex;flex-wrap:wrap;gap:4mm;}
+    .sticker{border:1px dashed #C9A84C;border-radius:3mm;padding:2mm;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;page-break-inside:avoid;}
+    .brand{font-size:6px;font-weight:700;color:#8B6914;letter-spacing:.5px;text-transform:uppercase;margin-bottom:1mm;}
+    .qr-wrap{display:flex;align-items:center;justify-content:center;}
+    .qr-wrap canvas,.qr-wrap img{max-width:100%;height:auto!important;}
+    .gram{font-size:6px;font-weight:700;color:#2a2a2a;margin-top:1mm;}
+    .code{font-size:4.5px;color:#888;font-family:monospace;letter-spacing:.3px;margin-top:.5mm;word-break:break-all;}
+    .no-print{background:#C9A84C;border:none;padding:10px 20px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;margin-right:8px;}
+    @media print{.no-print{display:none!important;}body{padding:5mm;}}
+  </style>
+  </head><body>
+  <h2>🌿 Origin CBD — QR codes fidélité</h2>
+  <div class="meta">${generatedCodes.length} étiquettes · ${sz.label} · Format sticker ${sz.w}×${sz.h}</div>
+  <div class="info-box">📌 Imprimez sur papier adhésif puis découpez · Collez sur le dos du pochon avant fermeture</div>
+  <div class="no-print" style="display:inline-block;margin-bottom:12px;">
+    <button class="no-print" onclick="window.print()">🖨 Imprimer les étiquettes</button>
+    <button class="no-print" onclick="window.close()" style="background:#eee;color:#333;">✕ Fermer</button>
+  </div>
+  <div class="grid">${rows}</div>
+  <script>
+    const codes=${JSON.stringify(generatedCodes)};
+    const sz={w:'${sz.w}',h:'${sz.h}'};
+    const qrSizePx=Math.round(parseInt(sz.w)*3.78)-14;
+    codes.forEach((c,i)=>{
+      const el=document.getElementById('qr-print-'+i);
+      if(!el)return;
+      new QRCode(el,{text:JSON.stringify({code:c.code,gram:c.gram,pts:c.pts}),width:qrSizePx,height:qrSizePx,colorDark:'#0a0a0a',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+    });
+  <\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+async function exportCSV(){
+  try{
+    const snap=await fn.getDocs(fn.collection(db,'clients'));
+    const cl=[];snap.forEach(d=>cl.push(d.data()));
+    if(!cl.length){toast('⚠️','Aucun client');return;}
+    const csv=[['Prénom','Email','Points','Niveau','Scans','Membre depuis'],...cl.map(c=>[c.prenom,c.email,c.pts||0,getLv(c.pts||0).name,c.scans||0,c.createdAt?.split('T')[0]||'—'])];
+    const a=document.createElement('a');
+    a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv.map(r=>r.join(';')).join('\n'));
+    a.download='origin-cbd-clients.csv'; a.click();
+    toast('📥','Export téléchargé !');
+  }catch(e){toast('❌','Erreur : '+e.message);}
+}
+
+function togglePro(header){
+  const body=header.nextElementSibling;
+  const arrow=header.querySelector('div:last-child');
+  body.style.display=body.style.display==='none'?'block':'none';
+  arrow.style.transform=body.style.display==='block'?'rotate(90deg)':'';
+}
+
+function toast(ico,msg){
+  document.getElementById('ti').textContent=ico;
+  document.getElementById('tm').textContent=msg;
+  const t=document.getElementById('toast');
+  t.classList.add('on');clearTimeout(window._tt);
+  window._tt=setTimeout(()=>t.classList.remove('on'),3200);
+}
+</script>
+</body>
+</html>
