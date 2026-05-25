@@ -322,21 +322,8 @@ function envoyerCommande(name, variant, qty, total, prenom, email, resume){
   const detailCommande = resume || (name+' — '+variant+' ×'+qty);
   const subj = encodeURIComponent('🛍️ Commande Origin CBD — '+total+'€');
   const body = encodeURIComponent('Produit(s): '+detailCommande+'\nTotal: '+total+'€\nClient: '+prenom+'\nEmail: '+(email||'—')+'\nDate: '+new Date().toLocaleString('fr-FR'));
-  const mailtoLink = 'mailto:origincbd1900@gmail.com?subject='+subj+'&body='+body;
-  const ok = document.getElementById('order-sent-ok');
-  if(ok){
-    ok.style.display='block';
-    ok.style.background='#FFF8E7';
-    ok.style.border='1.5px solid rgba(201,168,76,.3)';
-    ok.style.borderRadius='10px';
-    ok.style.padding='14px';
-    ok.innerHTML='<div style="font-size:13px;font-weight:700;color:#7A5500;margin-bottom:10px;">📧 Appuyez sur ce bouton pour envoyer votre commande :</div>'
-      +'<a href="'+mailtoLink+'" style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#9A6800,#C8A84B);border-radius:10px;font-size:14px;font-weight:800;color:#000;text-decoration:none;text-align:center;box-sizing:border-box;">Envoyer par Gmail →</a>'
-      +'<div style="font-size:11px;color:#A07820;margin-top:8px;text-align:center;">Ou écrivez à : origincbd1900@gmail.com</div>';
-  }
-  if(btn) btn.style.display='none';
-}
-
+  alert("Commande envoyée !");
+toast('✅','Commande envoyée !');
 function _lancerCommande(pid, name, prenom, email, resumeOverride, totalOverride){
   let variant='', qty=1, total=0, resume='';
   if(pid==='panier'){
