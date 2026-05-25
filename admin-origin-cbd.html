@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Origin CBD — Espace Gérant</title>
+<meta name="theme-color" content="#0A0A0A">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D0B08;
+  --bg2:#141210;
+  --bg3:#1A1714;
+  --card:#1E1B16;
+  --card2:#242018;
+  --gold:#C9A84C;
+  --gold2:#E8C97A;
+  --gold3:rgba(201,168,76,0.15);
+  --gold4:rgba(201,168,76,0.08);
+  --border:rgba(201,168,76,0.12);
+  --border2:rgba(201,168,76,0.22);
+  --text:#F5EDD8;
+  --text2:#A89060;
+  --text3:#6B5530;
+  --red:#E05252;
+  --green:#5BAD7A;
+  --blue:#5B8EAD;
+  --r:14px;
+  --rsm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(201,168,76,0)}50%{box-shadow:0 0 40px rgba(201,168,76,0.15)}}
+
+/* ─── SCREENS ─── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+
+/* ─── PIN SCREEN ─── */
+#s-pin{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  background:radial-gradient(ellipse at center top, #1a1507 0%, #0D0B08 70%);
+  padding:40px 24px;
+}
+#s-pin.active{display:flex;flex-direction:column;}
+
+.pin-header{text-align:center;margin-bottom:48px;}
+.pin-brand{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-style:italic;letter-spacing:1px;}
+.pin-sub{font-size:11px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-top:6px;}
+.pin-badge{display:inline-block;padding:4px 14px;border:1px solid var(--border2);border-radius:20px;font-size:10px;font-weight:600;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:16px;background:var(--gold4);}
+
+.pin-card{
+  width:100%;max-width:360px;
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  padding:36px 32px;
+  animation:glow 3s ease-in-out infinite;
+}
+.pin-title{font-size:14px;font-weight:500;color:var(--text2);text-align:center;letter-spacing:.5px;margin-bottom:28px;}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:32px;}
+.pin-dot{
+  width:14px;height:14px;
+  border-radius:50%;
+  background:transparent;
+  border:1.5px solid var(--text3);
+  transition:all .2s;
+}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(201,168,76,0.5);}
+.pin-dot.error{background:var(--red);border-color:var(--red);}
+
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pk{
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  color:var(--text);
+  cursor:pointer;
+  text-align:center;
+  transition:all .15s;
+  user-select:none;
+}
+.pk:active{background:var(--gold3);border-color:var(--gold);transform:scale(.95);}
+.pk.del{font-size:16px;font-family:'DM Sans',sans-serif;}
+.pk.ok{font-size:14px;font-weight:600;color:var(--gold);}
+
+.pin-err{font-size:12px;color:var(--red);text-align:center;margin-top:16px;min-height:18px;animation:fadeIn .2s;}
+
+/* ─── MAIN APP ─── */
+#s-app{
+  display:none;
+  min-height:100vh;
+  max-width:480px;
+  margin:0 auto;
+}
+#s-app.active{display:block;}
+
+.app-top{
+  padding:52px 20px 16px;
+  background:linear-gradient(180deg, var(--bg2) 0%, transparent 100%);
+  position:sticky;
+  top:0;
+  z-index:100;
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.app-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.app-brand{
+  display:flex;align-items:center;gap:10px;
+}
+.app-brand-logo{
+  width:36px;height:36px;
+  background:var(--gold3);
+  border:1px solid var(--border2);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:14px;color:var(--gold);font-style:italic;
+}
+.app-brand-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold);}
+.app-brand-role{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
+
+.logout-btn{
+  padding:7px 14px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:20px;
+  font-size:11px;
+  font-weight:500;
+  color:var(--text2);
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .15s;
+}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* TABS */
+.tabs{display:flex;gap:4px;overflow-x:auto;padding:0 2px 2px;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{
+  flex-shrink:0;
+  padding:8px 14px;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:20px;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  color:var(--text3);
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all .2s;
+  display:flex;align-items:center;gap:5px;
+}
+.tab-btn.on{
+  background:var(--gold3);
+  border-color:var(--border2);
+  color:var(--gold);
+}
+.tab-badge{
+  background:var(--red);
+  color:#fff;
+  font-size:9px;
+  font-weight:700;
+  padding:1px 5px;
+  border-radius:8px;
+  min-width:16px;
+  text-align:center;
+}
+
+/* CONTENT */
+.tab-pane{display:none;padding:20px 16px 100px;animation:fadeIn .3s ease;}
+.tab-pane.on{display:block;}
+
+/* SECTION */
+.sec{margin-bottom:24px;}
+.sec-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:18px;
+  color:var(--text);
+}
+.sec-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.sec-action{
+  padding:7px 14px;
+  background:var(--gold3);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--gold);
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .15s;
+}
+.sec-action:active{transform:scale(.96);}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.stat-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:16px;
+}
+.stat-icon{font-size:22px;margin-bottom:8px;}
+.stat-val{
+  font-family:'Playfair Display',serif;
+  font-size:28px;
+  font-weight:700;
+  color:var(--gold);
+  line-height:1;
+}
+.stat-lbl{font-size:11px;color:var(--text2);margin-top:4px;}
+.stat-card.full{grid-column:span 2;}
+
+/* CARD */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+}
+.card-row{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  animation:fadeIn .3s ease;
+}
+.card-row:last-child{border-bottom:none;}
+
+/* AVIS */
+.avis-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.avis-name{font-size:13px;font-weight:600;color:var(--text);}
+.avis-stars{color:#FFD700;font-size:12px;letter-spacing:1px;}
+.avis-date{font-size:10px;color:var(--text3);margin-left:auto;}
+.avis-text{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;}
+.avis-reply{
+  font-size:11px;color:var(--gold);
+  padding:6px 10px;
+  background:var(--gold4);
+  border:1px solid var(--border);
+  border-radius:var(--rsm);
+  margin-bottom:8px;
+  line-height:1.5;
+}
+.avis-actions{display:flex;gap:6px;}
+.btn-xs{
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .15s;
+}
+.btn-xs:active{transform:scale(.94);}
+.btn-reply{background:var(--gold3);color:var(--gold);border:1px solid var(--border2);}
+.btn-del{background:rgba(224,82,82,0.08);color:var(--red);border:1px solid rgba(224,82,82,0.2);}
+
+/* COMMANDES */
+.cmd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.cmd-client{font-size:13px;font-weight:600;color:var(--text);}
+.cmd-total{
+  font-family:'DM Mono',monospace;
+  font-size:14px;
+  font-weight:500;
+  color:var(--gold);
+  flex-shrink:0;
+}
+.cmd-resume{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
+.cmd-date{font-size:10px;color:var(--text3);margin-bottom:10px;}
+.cmd-statuts{display:flex;gap:5px;flex-wrap:wrap;}
+.statut-btn{
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .15s;
+  opacity:.45;
+}
+.statut-btn.active{opacity:1;}
+.statut-attente{background:rgba(107,85,48,0.2);color:#C8A84B;border:1px solid rgba(201,168,76,0.2);}
+.statut-confirmee{background:rgba(91,173,122,0.12);color:var(--green);border:1px solid rgba(91,173,122,0.2);}
+.statut-expediee{background:rgba(91,142,173,0.12);color:var(--blue);border:1px solid rgba(91,142,173,0.2);}
+
+/* PROMO */
+.promo-gen{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:var(--r);
+  padding:20px;
+  margin-bottom:16px;
+}
+.promo-gen-title{font-family:'Playfair Display',serif;font-size:16px;margin-bottom:16px;}
+.form-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:7px;display:block;}
+.form-inp{
+  width:100%;
+  padding:12px 14px;
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:var(--rsm);
+  color:var(--text);
+  font-family:'DM Mono',monospace;
+  font-size:14px;
+  outline:none;
+  transition:border-color .2s;
+  margin-bottom:12px;
+  -webkit-appearance:none;
+}
+.form-inp:focus{border-color:var(--gold);}
+.form-inp::placeholder{color:var(--text3);font-family:'DM Sans',sans-serif;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.type-row{display:flex;gap:8px;margin-bottom:12px;}
+.type-btn{
+  flex:1;padding:10px;
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:var(--rsm);
+  font-size:12px;
+  font-weight:600;
+  color:var(--text3);
+  cursor:pointer;
+  text-align:center;
+  transition:all .2s;
+  font-family:'DM Sans',sans-serif;
+}
+.type-btn.sel{background:var(--gold3);border-color:var(--gold);color:var(--gold);}
+
+.btn-gen{
+  width:100%;
+  padding:14px;
+  background:linear-gradient(135deg, #8a6200, var(--gold), var(--gold2));
+  border:none;
+  border-radius:var(--rsm);
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  color:#000;
+  cursor:pointer;
+  transition:all .2s;
+  letter-spacing:.5px;
+}
+.btn-gen:active{transform:scale(.97);}
+
+/* PROMO LIST */
+.promo-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+}
+.promo-item:last-child{border-bottom:none;}
+.promo-code{
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  font-weight:500;
+  color:var(--gold);
+  letter-spacing:1px;
+  flex:1;
+}
+.promo-detail{font-size:10px;color:var(--text3);margin-top:2px;}
+.promo-badge{
+  padding:4px 10px;
+  background:var(--gold3);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  color:var(--gold);
+  white-space:nowrap;
+}
+.promo-badge.used{background:rgba(224,82,82,0.08);border-color:rgba(224,82,82,0.2);color:var(--red);}
+
+/* BOTTOM NAV */
+.bnav{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:rgba(13,11,8,.95);
+  backdrop-filter:blur(24px);
+  border-top:1px solid var(--border);
+  display:flex;
+  padding:10px 0 22px;
+  z-index:200;
+  max-width:480px;
+  margin:0 auto;
+}
+.bnav-btn{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  font-size:9px;font-weight:600;
+  letter-spacing:.5px;text-transform:uppercase;
+  color:var(--text3);padding:6px 0;
+  transition:color .15s;
+  position:relative;
+}
+.bnav-btn svg{width:20px;height:20px;}
+.bnav-btn.on{color:var(--gold);}
+.bnav-notif{
+  position:absolute;top:2px;right:calc(50% - 18px);
+  width:8px;height:8px;
+  background:var(--red);
+  border-radius:50%;
+  border:2px solid var(--bg);
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:90px;left:16px;right:16px;
+  max-width:448px;margin:0 auto;
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:12px;
+  padding:13px 16px;
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:500;
+  z-index:9999;
+  transform:translateY(16px);opacity:0;
+  transition:all .3s;
+  pointer-events:none;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+.toast.on{transform:translateY(0);opacity:1;}
+
+/* MODAL */
+.modal-bg{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.7);
+  z-index:999;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.modal-box{
+  width:100%;max-width:480px;
+  background:var(--card);
+  border-radius:20px 20px 0 0;
+  border-top:1px solid var(--border2);
+  padding:28px 24px 40px;
+  animation:slideUp .3s ease;
+}
+.modal-title{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:20px;}
+
+/* EMPTY */
+.empty{
+  text-align:center;padding:40px 20px;
+  color:var(--text3);font-size:13px;
+}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5;}
+
+/* CONFIRM MODAL */
+.confirm-box{
+  width:100%;max-width:340px;
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:18px;
+  padding:28px 24px;
+  text-align:center;
+  animation:fadeIn .2s;
+}
+.confirm-icon{font-size:36px;margin-bottom:12px;}
+.confirm-title{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:8px;}
+.confirm-sub{font-size:13px;color:var(--text2);margin-bottom:22px;}
+.confirm-btns{display:flex;gap:10px;}
+.confirm-cancel{flex:1;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.confirm-ok{flex:1;padding:12px;background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.25);border-radius:10px;font-size:13px;font-weight:700;color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.filter-chip{
+  flex-shrink:0;
+  padding:6px 14px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:20px;
+  font-size:11px;
+  font-weight:500;
+  color:var(--text3);
+  cursor:pointer;
+  transition:all .15s;
+  font-family:'DM Sans',sans-serif;
+}
+.filter-chip.sel{background:var(--gold3);border-color:var(--gold2);color:var(--gold);}
+
+/* SEARCH */
+.search-bar{
+  width:100%;
+  padding:10px 14px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--rsm);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  outline:none;
+  margin-bottom:14px;
+  -webkit-appearance:none;
+}
+.search-bar:focus{border-color:var(--border2);}
+.search-bar::placeholder{color:var(--text3);}
+
+/* TEXTAREA */
+.form-textarea{
+  width:100%;
+  padding:12px 14px;
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:var(--rsm);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  outline:none;
+  resize:none;
+  height:90px;
+  transition:border-color .2s;
+  margin-bottom:14px;
+}
+.form-textarea:focus{border-color:var(--gold);}
+.form-textarea::placeholder{color:var(--text3);}
+
+/* GRAM CHIPS */
+.gram-chip{
+  padding:8px 14px;
+  background:var(--bg2);
+  border:1.5px solid var(--border);
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--text3);
+  cursor:pointer;
+  transition:all .15s;
+  font-family:'DM Mono',monospace;
+  user-select:none;
+}
+.gram-chip:active{transform:scale(.94);}
+.gram-chip.sel{background:var(--gold3);border-color:var(--gold);color:var(--gold);}
+
+/* COPY BTN */
+.copy-btn{
+  padding:5px 10px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-size:10px;
+  font-weight:600;
+  color:var(--text3);
+  cursor:pointer;
+  font-family:'DM Mono',monospace;
+  transition:all .15s;
+}
+.copy-btn:active{color:var(--green);}
+
+/* DIVIDER */
+.div{height:1px;background:var(--border);margin:16px 0;}
+
+/* LINK */
+.ext-link{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;color:var(--text3);
+  text-decoration:none;
+  border-bottom:1px dashed var(--text3);
+  padding-bottom:1px;
+  transition:color .15s;
+}
+.ext-link:hover{color:var(--gold);}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <span id="ti"></span>
+  <span id="tm"></span>
+</div>
+
+<!-- ─── PIN SCREEN ─── -->
+<div class="screen" id="s-pin">
+  <div class="pin-header">
+    <div class="pin-brand">Origin CBD</div>
+    <div class="pin-sub">— L'origine du bien-être —</div>
+    <div class="pin-badge">🔐 Espace Gérant</div>
+  </div>
+
+  <div class="pin-card">
+    <div class="pin-title">Entrez votre code PIN</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+      <div class="pin-dot" id="pd4"></div>
+      <div class="pin-dot" id="pd5"></div>
+      <div class="pin-dot" id="pd6"></div>
+      <div class="pin-dot" id="pd7"></div>
+    </div>
+    <div class="pin-grid">
+      <div class="pk" onclick="pk('1')">1</div>
+      <div class="pk" onclick="pk('2')">2</div>
+      <div class="pk" onclick="pk('3')">3</div>
+      <div class="pk" onclick="pk('4')">4</div>
+      <div class="pk" onclick="pk('5')">5</div>
+      <div class="pk" onclick="pk('6')">6</div>
+      <div class="pk" onclick="pk('7')">7</div>
+      <div class="pk" onclick="pk('8')">8</div>
+      <div class="pk" onclick="pk('9')">9</div>
+      <div class="pk del" onclick="pkClear()">Effacer</div>
+      <div class="pk" onclick="pk('0')">0</div>
+      <div class="pk ok" onclick="pkValidate()">OK ✓</div>
+    </div>
+    <div class="pin-err" id="pin-err"></div>
+  </div>
+
+  <div style="margin-top:28px;text-align:center;">
+    <a href="index.html" class="ext-link">← Retour à l'app client</a>
+  </div>
+</div>
+
+<!-- ─── MAIN APP ─── -->
+<div class="screen" id="s-app">
+
+  <!-- TOP BAR -->
+  <div class="app-top">
+    <div class="app-top-row">
+      <div class="app-brand">
+        <div class="app-brand-logo">O</div>
+        <div>
+          <div class="app-brand-name">Origin CBD</div>
+          <div class="app-brand-role">Gérant</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      <a href="index.html" style="padding:7px 14px;background:var(--gold3);border:1px solid var(--border2);border-radius:20px;font-size:11px;font-weight:600;color:var(--gold);text-decoration:none;white-space:nowrap;">← App client</a>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab-btn on" onclick="goTab(this,'t-dashboard')">📊 Dashboard</button>
+      <button class="tab-btn" onclick="goTab(this,'t-avis')">⭐ Avis <span class="tab-badge" id="badge-avis" style="display:none">0</span></button>
+      <button class="tab-btn" onclick="goTab(this,'t-commandes')">🛒 Commandes <span class="tab-badge" id="badge-cmds" style="display:none">0</span></button>
+      <button class="tab-btn" onclick="goTab(this,'t-promos')">🎫 Codes Promo</button>
+      <button class="tab-btn" onclick="goTab(this,'t-settings')">⚙️ Paramètres</button>
+    </div>
+  </div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="tab-pane on" id="t-dashboard">
+    <div class="sec">
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px;">Bonjour 👋</div>
+        <div style="font-size:13px;color:var(--text2);" id="dash-date">—</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-val" id="d-clients">—</div>
+          <div class="stat-lbl">Clients inscrits</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-val" id="d-avis">—</div>
+          <div class="stat-lbl">Avis publiés</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-val" id="d-cmds">—</div>
+          <div class="stat-lbl">Commandes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎫</div>
+          <div class="stat-val" id="d-promos">—</div>
+          <div class="stat-lbl">Codes Promo</div>
+        </div>
+        <div class="stat-card full">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div>
+              <div class="stat-icon">📈</div>
+              <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;">Note moyenne</div>
+            </div>
+            <div style="font-family:'Playfair Display',serif;font-size:36px;color:var(--gold);" id="d-note">—</div>
+          </div>
+          <div style="height:4px;background:var(--bg2);border-radius:10px;overflow:hidden;">
+            <div style="height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:10px;transition:width 1s;" id="d-note-bar"></div>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px;" id="d-note-sub">—</div>
+        </div>
+      </div>
+
+      <!-- Commandes récentes -->
+      <div class="sec-head">
+        <div>
+          <div class="sec-title">Commandes récentes</div>
+          <div class="sec-sub">3 dernières</div>
+        </div>
+        <div class="sec-action" onclick="goTab(document.querySelector('.tab-btn:nth-child(3)'),'t-commandes')">Voir tout →</div>
+      </div>
+      <div class="card" id="d-cmds-list">
+        <div class="empty"><div class="empty-icon">📭</div>Aucune commande</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AVIS ═══ -->
+  <div class="tab-pane" id="t-avis">
+    <div class="sec">
+      <div class="sec-head">
+        <div>
+          <div class="sec-title">Avis clients</div>
+          <div class="sec-sub" id="avis-count-sub">—</div>
+        </div>
+      </div>
+
+      <div class="filter-bar" id="avis-filters">
+        <div class="filter-chip sel" onclick="filtrerAvis(this,'all')">Tous</div>
+        <div class="filter-chip" onclick="filtrerAvis(this,5)">★★★★★</div>
+        <div class="filter-chip" onclick="filtrerAvis(this,4)">★★★★</div>
+        <div class="filter-chip" onclick="filtrerAvis(this,3)">★★★</div>
+        <div class="filter-chip" onclick="filtrerAvis(this,2)">★★</div>
+        <div class="filter-chip" onclick="filtrerAvis(this,1)">★</div>
+        <div class="filter-chip" onclick="filtrerAvis(this,'sans-rep')">Sans réponse</div>
+      </div>
+
+      <div class="card" id="avis-list">
+        <div class="empty"><div class="empty-icon">⭐</div>Chargement…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ COMMANDES ═══ -->
+  <div class="tab-pane" id="t-commandes">
+    <div class="sec">
+      <div class="sec-head">
+        <div>
+          <div class="sec-title">Commandes</div>
+          <div class="sec-sub" id="cmds-count-sub">—</div>
+        </div>
+        <div class="sec-action" style="color:var(--red);border-color:rgba(224,82,82,0.3);background:rgba(224,82,82,0.06);" onclick="supprimerToutesCommandes()">🗑 Tout supprimer</div>
+      </div>
+
+      <div class="filter-bar" id="cmds-filters">
+        <div class="filter-chip sel" onclick="filtrerCmds(this,'all')">Toutes</div>
+        <div class="filter-chip" onclick="filtrerCmds(this,'En attente')">En attente</div>
+        <div class="filter-chip" onclick="filtrerCmds(this,'Confirmée')">Confirmées</div>
+        <div class="filter-chip" onclick="filtrerCmds(this,'Expédiée')">Expédiées</div>
+      </div>
+
+      <input class="search-bar" id="cmds-search" placeholder="🔍  Rechercher un client, produit…" oninput="renderCmds()">
+
+      <div class="card" id="cmds-list">
+        <div class="empty"><div class="empty-icon">🛒</div>Chargement…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CODES PROMO ═══ -->
+  <div class="tab-pane" id="t-promos">
+    <div class="sec">
+      <!-- Générateur simplifié -->
+      <div class="promo-gen">
+        <div class="promo-gen-title">🎫 Créer des codes promo</div>
+
+        <label class="form-label">Grammage → Points</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;" id="gram-chips">
+          <div class="gram-chip" onclick="selGram(this,1,1)">1g · 1pt</div>
+          <div class="gram-chip" onclick="selGram(this,2,2)">2g · 2pts</div>
+          <div class="gram-chip" onclick="selGram(this,3,3)">3g · 3pts</div>
+          <div class="gram-chip" onclick="selGram(this,4,4)">4g · 4pts</div>
+          <div class="gram-chip" onclick="selGram(this,5,5)">5g · 5pts</div>
+          <div class="gram-chip" onclick="selGram(this,6,6)">6g · 6pts</div>
+          <div class="gram-chip" onclick="selGram(this,7,7)">7g · 7pts</div>
+          <div class="gram-chip" onclick="selGram(this,8,8)">8g · 8pts</div>
+          <div class="gram-chip" onclick="selGram(this,9,9)">9g · 9pts</div>
+          <div class="gram-chip" onclick="selGram(this,10,10)">10g · 10pts</div>
+        </div>
+
+        <label class="form-label">Nombre de codes</label>
+        <input class="form-inp" id="promo-qty" type="number" placeholder="Ex: 5" min="1" max="100" value="1">
+
+        <div id="promo-preview" style="display:none;margin-bottom:14px;padding:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rsm);">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Aperçu</div>
+          <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);" id="promo-preview-text">—</div>
+        </div>
+
+        <button class="btn-gen" onclick="genererPromo()">🎫 Générer les codes</button>
+      </div>
+
+      <!-- Liste des codes -->
+      <div class="sec-head">
+        <div>
+          <div class="sec-title">Codes générés</div>
+          <div class="sec-sub" id="promos-count-sub">—</div>
+        </div>
+        <div class="sec-action" onclick="clearUsedPromos()">Nettoyer les utilisés</div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-chip sel" onclick="filtrerPromos(this,'all')">Tous</div>
+        <div class="filter-chip" onclick="filtrerPromos(this,'actif')">Disponibles</div>
+        <div class="filter-chip" onclick="filtrerPromos(this,'epuise')">Utilisés</div>
+      </div>
+
+      <div class="card" id="promos-list">
+        <div class="empty"><div class="empty-icon">🎫</div>Aucun code créé</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /s-app -->
+
+  <!-- ═══ PARAMÈTRES ═══ -->
+  <div class="tab-pane" id="t-settings">
+    <div class="sec">
+
+      <!-- Lien vers app -->
+      <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:3px;">🌿 App client</div>
+          <div style="font-size:11px;color:var(--text3);">Ouvrir l'application Origin CBD</div>
+        </div>
+        <a href="index.html" style="padding:9px 18px;background:linear-gradient(135deg,#8a6200,var(--gold));border-radius:20px;font-size:12px;font-weight:700;color:#000;text-decoration:none;">Ouvrir →</a>
+      </div>
+
+      <!-- Changement PIN -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:3px;">🔐 Changer le code PIN</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">Code actuel : <span id="pin-display" style="font-family:'DM Mono',monospace;color:var(--gold);">••••••••</span></div>
+        <input class="form-inp" id="new-pin" type="number" placeholder="Nouveau code (chiffres)" maxlength="20" style="margin-bottom:8px;">
+        <button class="btn-gen" onclick="changerPin()" style="font-size:13px;padding:12px;">Enregistrer le nouveau PIN</button>
+      </div>
+
+      <!-- Réinitialisations -->
+      <div class="sec-head" style="margin-top:8px;">
+        <div>
+          <div class="sec-title">🔄 Réinitialisation</div>
+          <div class="sec-sub">Effacer les données de l'app client</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px;">
+
+        <div class="card-row" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">🛒 Commandes</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Toutes les commandes clients</div>
+          </div>
+          <button class="btn-xs btn-del" onclick="resetCategorie('commandes')">Effacer</button>
+        </div>
+
+        <div class="card-row" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">⭐ Avis</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Tous les avis publiés</div>
+          </div>
+          <button class="btn-xs btn-del" onclick="resetCategorie('avis')">Effacer</button>
+        </div>
+
+        <div class="card-row" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">🎫 Codes promo</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Tous les codes générés</div>
+          </div>
+          <button class="btn-xs btn-del" onclick="resetCategorie('promos')">Effacer</button>
+        </div>
+
+        <div class="card-row" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">👥 Clients & Points</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Comptes, points et historiques</div>
+          </div>
+          <button class="btn-xs btn-del" onclick="resetCategorie('clients')">Effacer</button>
+        </div>
+
+      </div>
+
+      <!-- Reset total -->
+      <div style="background:rgba(224,82,82,0.06);border:1px solid rgba(224,82,82,0.2);border-radius:var(--r);padding:18px 20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:4px;">⚠️ Réinitialisation complète</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Efface absolument tout — clients, avis, commandes, codes promo. Irréversible.</div>
+        <button onclick="resetTotal()" style="width:100%;padding:13px;background:rgba(224,82,82,0.12);border:1.5px solid rgba(224,82,82,0.3);border-radius:var(--rsm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--red);cursor:pointer;">🗑 Tout réinitialiser</button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /s-app -->
+
+<!-- BOTTOM NAV -->
+<div class="bnav" id="bnav" style="display:none;">
+  <button class="bnav-btn on" onclick="goTab(document.querySelector('.tab-btn:nth-child(1)'),'t-dashboard');bnavActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Board
+  </button>
+  <button class="bnav-btn" onclick="goTab(document.querySelector('.tab-btn:nth-child(2)'),'t-avis');bnavActive(this)">
+    <div class="bnav-notif" id="nav-notif-avis" style="display:none;"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Avis
+  </button>
+  <button class="bnav-btn" onclick="goTab(document.querySelector('.tab-btn:nth-child(3)'),'t-commandes');bnavActive(this)">
+    <div class="bnav-notif" id="nav-notif-cmds" style="display:none;"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Commandes
+  </button>
+  <button class="bnav-btn" onclick="goTab(document.querySelector('.tab-btn:nth-child(4)'),'t-promos');bnavActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    Promos
+  </button>
+  <button class="bnav-btn" onclick="goTab(document.querySelector('.tab-btn:nth-child(5)'),'t-settings');bnavActive(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Réglages
+  </button>
+</div>
+
+<script>
+// ─── STATE ───
+let pinEntry = '';
+const PIN_KEY = 'ocbd_admin_pin';
+const PIN_LENGTH = 8;
+const PROMO_KEY = 'ocbd_promos';
+const AVIS_KEY = 'ocbd_avis';
+const REG_KEY = 'ocbd_registre_clients';
+
+let currentAvisFilter = 'all';
+let currentCmdsFilter = 'all';
+let currentPromosFilter = 'all';
+
+// ─── INIT ───
+function init(){
+  // Afficher PIN
+  document.getElementById('s-pin').classList.add('active');
+  // Date
+  const d = new Date();
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  const ds = document.getElementById('dash-date');
+  if(ds) ds.textContent = d.toLocaleDateString('fr-FR',opts);
+}
+
+// ─── PIN ───
+function getPin(){
+  return localStorage.getItem(PIN_KEY) || '35353010';
+}
+
+function pk(k){
+  if(pinEntry.length >= PIN_LENGTH) return;
+  pinEntry += k;
+  document.getElementById('pd'+(pinEntry.length-1)).classList.add('filled');
+  if(pinEntry.length === PIN_LENGTH) setTimeout(pkValidate, 200);
+}
+
+function pkClear(){
+  if(!pinEntry.length) return;
+  document.getElementById('pd'+(pinEntry.length-1)).classList.remove('filled');
+  pinEntry = pinEntry.slice(0,-1);
+  document.getElementById('pin-err').textContent = '';
+}
+
+function pkValidate(){
+  const correct = getPin();
+  if(pinEntry === correct){
+    document.getElementById('s-pin').classList.remove('active');
+    document.getElementById('s-app').classList.add('active');
+    document.getElementById('bnav').style.display = 'flex';
+    loadAll();
+  } else {
+    document.querySelectorAll('.pin-dot').forEach(d => d.classList.add('error'));
+    document.getElementById('pin-err').textContent = '❌ Code incorrect — réessayez';
+    setTimeout(() => {
+      pinEntry = '';
+      document.querySelectorAll('.pin-dot').forEach(d => {d.classList.remove('filled','error');});
+      document.getElementById('pin-err').textContent = '';
+    }, 800);
+  }
+}
+
+function logout(){
+  document.getElementById('s-app').classList.remove('active');
+  document.getElementById('bnav').style.display = 'none';
+  document.getElementById('s-pin').classList.add('active');
+  pinEntry = '';
+  document.querySelectorAll('.pin-dot').forEach(d => d.classList.remove('filled','error'));
+  toast('✅','Déconnecté');
+}
+
+// ─── NAVIGATION ───
+function goTab(btn, paneId){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  const pane = document.getElementById(paneId);
+  if(pane) pane.classList.add('on');
+  // Reload data for pane
+  if(paneId === 't-dashboard') loadDashboard();
+  if(paneId === 't-avis') renderAvis();
+  if(paneId === 't-commandes') renderCmds();
+  if(paneId === 't-promos') renderPromos();
+}
+
+function bnavActive(btn){
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ─── LOAD ALL ───
+function loadAll(){
+  loadDashboard();
+  updateBadges();
+}
+
+function updateBadges(){
+  const avis = JSON.parse(localStorage.getItem(AVIS_KEY)||'[]');
+  const sansRep = avis.filter(a => !a.reponse).length;
+  const badgeAvis = document.getElementById('badge-avis');
+  if(sansRep > 0){ badgeAvis.textContent = sansRep; badgeAvis.style.display='inline-block'; document.getElementById('nav-notif-avis').style.display='block'; }
+  else { badgeAvis.style.display='none'; document.getElementById('nav-notif-avis').style.display='none'; }
+
+  const cmds = getAllCommandes();
+  const attente = cmds.filter(c => c.statut === 'En attente').length;
+  const badgeCmds = document.getElementById('badge-cmds');
+  if(attente > 0){ badgeCmds.textContent = attente; badgeCmds.style.display='inline-block'; document.getElementById('nav-notif-cmds').style.display='block'; }
+  else { badgeCmds.style.display='none'; document.getElementById('nav-notif-cmds').style.display='none'; }
+}
+
+// ─── DASHBOARD ───
+function loadDashboard(){
+  const avis = JSON.parse(localStorage.getItem(AVIS_KEY)||'[]');
+  const promos = JSON.parse(localStorage.getItem(PROMO_KEY)||'[]');
+  const reg = JSON.parse(localStorage.getItem(REG_KEY)||'{}');
+  const clients = Object.values(reg);
+  const cmds = getAllCommandes();
+
+  document.getElementById('d-clients').textContent = clients.length;
+  document.getElementById('d-avis').textContent = avis.length;
+  document.getElementById('d-cmds').textContent = cmds.length;
+  document.getElementById('d-promos').textContent = promos.length;
+
+  // Note moyenne
+  if(avis.length){
+    const avg = (avis.reduce((a,v) => a+(v.note||0),0)/avis.length).toFixed(1);
+    document.getElementById('d-note').textContent = avg + ' ★';
+    document.getElementById('d-note-bar').style.width = (avg/5*100)+'%';
+    document.getElementById('d-note-sub').textContent = 'sur '+avis.length+' avis — '+avg+'/5';
+  } else {
+    document.getElementById('d-note').textContent = '—';
+    document.getElementById('d-note-bar').style.width = '0%';
+    document.getElementById('d-note-sub').textContent = 'Aucun avis encore';
+  }
+
+  // Commandes récentes
+  const recent = [...cmds].sort((a,b) => (b.ts||0)-(a.ts||0)).slice(0,3);
+  const el = document.getElementById('d-cmds-list');
+  if(!recent.length){
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>Aucune commande</div>';
+  } else {
+    el.innerHTML = recent.map(c => `
+      <div class="card-row">
+        <div class="cmd-head">
+          <div class="cmd-client">${escHtml(c.prenom)}</div>
+          <div class="cmd-total">${c.total}€</div>
+        </div>
+        <div class="cmd-resume">${escHtml(c.resume)}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="cmd-date">${c.date}</div>
+          <span class="statut-btn active ${statutClass(c.statut)}" style="opacity:1;pointer-events:none;">${statutIcon(c.statut)} ${c.statut}</span>
+        </div>
+      </div>`).join('');
+  }
+}
+
+// ─── AVIS ───
+function renderAvis(){
+  let liste = JSON.parse(localStorage.getItem(AVIS_KEY)||'[]');
+  document.getElementById('avis-count-sub').textContent = liste.length + ' avis au total';
+  if(currentAvisFilter !== 'all'){
+    if(currentAvisFilter === 'sans-rep') liste = liste.filter(a => !a.reponse);
+    else liste = liste.filter(a => a.note === currentAvisFilter);
+  }
+  const el = document.getElementById('avis-list');
+  if(!liste.length){
+    el.innerHTML = '<div class="empty"><div class="empty-icon">⭐</div>Aucun avis dans cette catégorie</div>';
+    return;
+  }
+  // Trier par date décroissante
+  const fullListe = JSON.parse(localStorage.getItem(AVIS_KEY)||'[]');
+  el.innerHTML = liste.map(a => {
+    const i = fullListe.findIndex(x => x.ts === a.ts && x.prenom === a.prenom);
+    return `
+    <div class="card-row">
+      <div class="avis-meta">
+        <div class="avis-name">${escHtml(a.prenom)}</div>
+        <div class="avis-stars">${'★'.repeat(a.note||0)}${'☆'.repeat(5-(a.note||0))}</div>
+        <div class="avis-date">${a.date||''}</div>
+      </div>
+      <div class="avis-text">${escHtml(a.texte||'')}</div>
+      ${a.reponse ? `<div class="avis-reply">✍️ <strong>Réponse :</strong> ${escHtml(a.reponse)}</div>` : ''}
+      <div class="avis-actions">
+        <button class="btn-xs btn-reply" onclick="ouvrirReponse(${i})">${a.reponse ? '✍️ Modifier' : '✍️ Répondre'}</button>
+        <button class="btn-xs btn-del" onclick="supprimerAvis(${i})">🗑 Supprimer</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filtrerAvis(el, val){
+  document.querySelectorAll('#avis-filters .filter-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  currentAvisFilter = val;
+  renderAvis();
+}
+
+function supprimerAvis(i){
+  showConfirm('Supprimer cet avis ?', 'Cette action est irréversible.', () => {
+    const liste = JSON.parse(localStorage.getItem(AVIS_KEY)||'[]');
+    liste.splice(i,1);
+    localStorage.setItem(AVIS_KEY, JSON.stringify(liste));
+    renderAvis();
+    loadDashboard();
+    updateBadges();
+    toast('✅', 'Avis supprimé');
+  });
+}
+
+function ouvrirReponse(i){
+  const liste = JSON.parse(localStorage.getItem(AVIS_KEY)||'[]');
+  const a = liste[i];
+  if(!a) return;
+  const modal = document.createElement('div');
+  modal.className = 'modal-bg';
+  modal.innerHTML = `<div class="modal-box">
+    <div class="modal-title">✍️ Répondre à ${escHtml(a.prenom)}</div>
+    <div class="modal-sub" style="font-style:italic;">"${escHtml((a.texte||'').substring(0,80))}${(a.texte||'').length>80?'…':''}"</div>
+    <label class="form-label">Votre réponse</label>
+    <textarea class="form-textarea" id="rep-text" placeholder="Votre réponse publique…">${escHtml(a.reponse||'')}</textarea>
+    <div style="display:flex;gap:8px;">
+      <button onclick="this.closest('.modal-bg').remove()" style="flex:1;padding:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;">Annuler</button>
+      <button onclick="publierReponse(${i},this)" style="flex:1;padding:13px;background:linear-gradient(135deg,#8a6200,var(--gold));border:none;border-radius:var(--rsm);font-size:13px;font-weight:700;color:#000;cursor:pointer;font-family:'DM Sans',sans-serif;">Publier ✓</button>
+    </div>
+  </div>`;
+  modal.onclick = function(e){ if(e.target===modal) modal.remove(); };
+  document.body.appendChild(modal);
+  setTimeout(() => document.getElementById('rep-text')?.focus(), 100);
+}
+
+function publierReponse(i, btn){
+  const rep = (document.getElementById('rep-text').value||'').trim();
+  if(!rep){ toast('⚠️','Écrivez une réponse'); return; }
+  const liste = JSON.parse(localStorage.getItem(AVIS_KEY)||'[]');
+  if(liste[i]) liste[i].reponse = rep;
+  localStorage.setItem(AVIS_KEY, JSON.stringify(liste));
+  btn.closest('.modal-bg').remove();
+  renderAvis();
+  toast('✅', 'Réponse publiée !');
+}
+
+// ─── COMMANDES ───
+function getAllCommandes(){
+  const all = [];
+  const reg = JSON.parse(localStorage.getItem(REG_KEY)||'{}');
+  const SKIP = new Set([AVIS_KEY, PROMO_KEY, PIN_KEY, REG_KEY]);
+  // Scan toutes les clés ocbd_ pour trouver les commandes
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(!k || !k.startsWith('ocbd_') || SKIP.has(k)) continue;
+    try{
+      const u = JSON.parse(localStorage.getItem(k)||'{}');
+      if(!u || !u.commandes || !u.commandes.length) continue;
+      const clientId = u.id || k.replace('ocbd_','');
+      const clientInfo = reg[clientId]||{};
+      u.commandes.forEach((cmd,idx)=>{
+        all.push({...cmd, clientId, cmdIdx:idx,
+          prenom: u.prenom||clientInfo.prenom||'—',
+          email:  u.email||clientInfo.email||''});
+      });
+    }catch(e){}
+  }
+  return all.sort((a,b)=>(b.ts||0)-(a.ts||0));
+}
+
+function renderCmds(){
+  let cmds = getAllCommandes();
+  const total = cmds.length;
+  document.getElementById('cmds-count-sub').textContent = total + ' commande' + (total>1?'s':'') + ' au total';
+
+  if(currentCmdsFilter !== 'all') cmds = cmds.filter(c => c.statut === currentCmdsFilter);
+
+  const q = (document.getElementById('cmds-search').value||'').toLowerCase().trim();
+  if(q) cmds = cmds.filter(c =>
+    (c.prenom||'').toLowerCase().includes(q) ||
+    (c.resume||'').toLowerCase().includes(q) ||
+    (c.email||'').toLowerCase().includes(q)
+  );
+
+  const el = document.getElementById('cmds-list');
+  if(!cmds.length){
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🛒</div>Aucune commande trouvée</div>';
+    return;
+  }
+  el.innerHTML = cmds.map(c => `
+    <div class="card-row">
+      <div class="cmd-head">
+        <div>
+          <div class="cmd-client">${escHtml(c.prenom)}</div>
+          ${c.email ? `<div style="font-size:10px;color:var(--text3);">${escHtml(c.email)}</div>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="cmd-total">${c.total||'?'}€</div>
+          <button class="btn-xs btn-del" style="font-size:10px;padding:5px 9px;" onclick="supprimerCommande('${c.clientId}',${c.cmdIdx})">🗑</button>
+        </div>
+      </div>
+      <div class="cmd-resume">${escHtml(c.resume||'—')}</div>
+      <div class="cmd-date">${c.date||'—'}</div>
+      <div class="cmd-statuts">
+        <button class="statut-btn statut-attente ${c.statut==='En attente'?'active':''}" onclick="changerStatut('${c.clientId}',${c.cmdIdx},'En attente')">⏳ En attente</button>
+        <button class="statut-btn statut-confirmee ${c.statut==='Confirmée'?'active':''}" onclick="changerStatut('${c.clientId}',${c.cmdIdx},'Confirmée')">✅ Confirmée</button>
+        <button class="statut-btn statut-expediee ${c.statut==='Expédiée'?'active':''}" onclick="changerStatut('${c.clientId}',${c.cmdIdx},'Expédiée')">🚚 Expédiée</button>
+      </div>
+    </div>`).join('');
+}
+
+function filtrerCmds(el, val){
+  document.querySelectorAll('#cmds-filters .filter-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  currentCmdsFilter = val;
+  renderCmds();
+}
+
+function supprimerCommande(clientId, cmdIdx){
+  showConfirm('Supprimer cette commande ?', 'Elle sera retirée de l\'historique client.', () => {
+    const localKey = 'ocbd_'+clientId;
+    const saved = localStorage.getItem(localKey);
+    if(!saved) return;
+    const u = JSON.parse(saved);
+    if(!u.commandes) return;
+    u.commandes.splice(cmdIdx, 1);
+    localStorage.setItem(localKey, JSON.stringify(u));
+    // Sync registre
+    const reg = JSON.parse(localStorage.getItem(REG_KEY)||'{}');
+    if(reg[clientId]){ reg[clientId].commandes = u.commandes; localStorage.setItem(REG_KEY, JSON.stringify(reg)); }
+    renderCmds(); loadDashboard(); updateBadges();
+    toast('✅', 'Commande supprimée');
+  });
+}
+
+function supprimerToutesCommandes(){
+  const all = getAllCommandes();
+  if(!all.length){ toast('ℹ️','Aucune commande à supprimer'); return; }
+  showConfirm('Supprimer TOUTES les commandes ?', all.length+' commande'+(all.length>1?'s':'')+' seront effacées définitivement.', () => {
+    const SKIP = new Set([AVIS_KEY, PROMO_KEY, PIN_KEY, REG_KEY]);
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(!k || !k.startsWith('ocbd_') || SKIP.has(k)) continue;
+      try{
+        const u = JSON.parse(localStorage.getItem(k)||'{}');
+        if(u.commandes){ u.commandes=[]; localStorage.setItem(k, JSON.stringify(u)); }
+      }catch(e){}
+    }
+    // Vider aussi dans le registre
+    const reg = JSON.parse(localStorage.getItem(REG_KEY)||'{}');
+    Object.keys(reg).forEach(id => { if(reg[id]) reg[id].commandes=[]; });
+    localStorage.setItem(REG_KEY, JSON.stringify(reg));
+    renderCmds(); loadDashboard(); updateBadges();
+    toast('✅', 'Toutes les commandes supprimées');
+  });
+}
+
+function changerStatut(clientId, cmdIdx, newStatut){
+  const localKey = 'ocbd_'+clientId;
+  const saved = localStorage.getItem(localKey);
+  if(!saved){ toast('⚠️','Client introuvable'); return; }
+  const u = JSON.parse(saved);
+  if(!u.commandes || !u.commandes[cmdIdx]){ toast('⚠️','Commande introuvable'); return; }
+  u.commandes[cmdIdx].statut = newStatut;
+  // ✅ Mise à jour clé individuelle
+  localStorage.setItem(localKey, JSON.stringify(u));
+  // ✅ Mise à jour registre (avec commandes)
+  const reg = JSON.parse(localStorage.getItem(REG_KEY)||'{}');
+  if(reg[clientId]){
+    reg[clientId].commandes = u.commandes;
+    localStorage.setItem(REG_KEY, JSON.stringify(reg));
+  }
+  renderCmds();
+  loadDashboard();
+  updateBadges();
+  toast(newStatut==='Confirmée'?'✅':newStatut==='Expédiée'?'🚚':'⏳', 'Statut → '+newStatut);
+}
+
+// ─── CODES PROMO (grammes → points) ───
+let selGramVal = 0, selPtsVal = 0;
+
+function selGram(el, gram, pts){
+  document.querySelectorAll('.gram-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  selGramVal = gram; selPtsVal = pts;
+  const qty = parseInt(document.getElementById('promo-qty').value)||1;
+  document.getElementById('promo-preview').style.display = 'block';
+  document.getElementById('promo-preview-text').textContent =
+    'PROMO-'+gram+'G-XXXXX · '+gram+'g · +'+pts+' point'+(pts>1?'s':'');
+}
+
+function uid6(){
+  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s='';for(let i=0;i<5;i++) s+=c[Math.floor(Math.random()*c.length)];
+  return s;
+}
+
+function genererPromo(){
+  if(!selGramVal){ toast('⚠️','Choisissez un grammage'); return; }
+  const qty = parseInt(document.getElementById('promo-qty').value)||1;
+  if(qty < 1 || qty > 100){ toast('⚠️','Entre 1 et 100 codes'); return; }
+
+  const promos = JSON.parse(localStorage.getItem(PROMO_KEY)||'[]');
+  const nouveaux = [];
+  for(let i=0;i<qty;i++){
+    const code = 'PROMO-'+selGramVal+'G-'+uid6();
+    nouveaux.push({
+      code,
+      gram: selGramVal,
+      pts: selPtsVal,
+      used: false,
+      createdAt: new Date().toLocaleDateString('fr-FR'),
+      ts: Date.now() + i
+    });
+  }
+  promos.unshift(...nouveaux);
+  localStorage.setItem(PROMO_KEY, JSON.stringify(promos));
+
+  // Reset
+  document.getElementById('promo-qty').value = '1';
+  document.getElementById('promo-preview').style.display = 'none';
+  document.querySelectorAll('.gram-chip').forEach(c => c.classList.remove('sel'));
+  selGramVal = 0; selPtsVal = 0;
+
+  renderPromos();
+  loadDashboard();
+  toast('✅', qty+' code'+(qty>1?'s':'')+' créé'+(qty>1?'s':'')+' !');
+}
+
+function renderPromos(){
+  let promos = JSON.parse(localStorage.getItem(PROMO_KEY)||'[]');
+  document.getElementById('promos-count-sub').textContent = promos.length + ' code'+(promos.length>1?'s':'')+' au total';
+
+  if(currentPromosFilter === 'actif')   promos = promos.filter(p => !p.used);
+  if(currentPromosFilter === 'epuise')  promos = promos.filter(p => p.used);
+
+  const el = document.getElementById('promos-list');
+  if(!promos.length){
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🎫</div>Aucun code dans cette catégorie</div>';
+    return;
+  }
+
+  const allPromos = JSON.parse(localStorage.getItem(PROMO_KEY)||'[]');
+  el.innerHTML = promos.map(p => {
+    const fullIdx = allPromos.findIndex(x => x.ts === p.ts);
+    return `
+    <div class="promo-item">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+          <div class="promo-code">${p.code}</div>
+          <button class="copy-btn" onclick="copyCode('${p.code}')">Copier</button>
+        </div>
+        <div class="promo-detail">${p.gram}g · +${p.pts} point${p.pts>1?'s':''} · Créé le ${p.createdAt}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="promo-badge ${p.used?'used':''}">${p.used ? '✓ Utilisé' : '+'+p.pts+' pt'+(p.pts>1?'s':'')}</div>
+        <button class="btn-xs btn-del" onclick="supprimerPromo(${fullIdx})" style="font-size:10px;">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filtrerPromos(el, val){
+  document.querySelectorAll('#t-promos .filter-bar .filter-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  currentPromosFilter = val;
+  renderPromos();
+}
+
+function copyCode(code){
+  navigator.clipboard.writeText(code).then(() => toast('📋', code+' copié !'));
+}
+
+function supprimerPromo(i){
+  showConfirm('Supprimer ce code ?', 'Cette action est irréversible.', () => {
+    const promos = JSON.parse(localStorage.getItem(PROMO_KEY)||'[]');
+    promos.splice(i,1);
+    localStorage.setItem(PROMO_KEY, JSON.stringify(promos));
+    renderPromos();
+    loadDashboard();
+    toast('✅', 'Code supprimé');
+  });
+}
+
+function clearUsedPromos(){
+  let promos = JSON.parse(localStorage.getItem(PROMO_KEY)||'[]');
+  const before = promos.length;
+  promos = promos.filter(p => !p.used);
+  localStorage.setItem(PROMO_KEY, JSON.stringify(promos));
+  const removed = before - promos.length;
+  toast(removed>0?'✅':'ℹ️', removed>0 ? removed+' code(s) supprimé(s)' : 'Aucun code utilisé');
+  renderPromos();
+}
+
+// ─── PARAMÈTRES ───
+function changerPin(){
+  const val = (document.getElementById('new-pin').value||'').trim();
+  if(!val || val.length < 4){ toast('⚠️','Minimum 4 chiffres'); return; }
+  if(!/^\d+$/.test(val)){ toast('⚠️','Chiffres uniquement'); return; }
+  localStorage.setItem(PIN_KEY, val);
+  document.getElementById('new-pin').value = '';
+  toast('✅', 'PIN mis à jour → '+val);
+}
+
+function resetCategorie(cat){
+  const labels = {
+    commandes: 'toutes les commandes',
+    avis: 'tous les avis',
+    promos: 'tous les codes promo',
+    clients: 'tous les clients et leurs points'
+  };
+  showConfirm('Effacer '+labels[cat]+' ?', 'Cette action est irréversible.', () => {
+    const SKIP = new Set([AVIS_KEY, PROMO_KEY, PIN_KEY, REG_KEY]);
+    if(cat === 'avis'){
+      localStorage.removeItem(AVIS_KEY);
+    } else if(cat === 'promos'){
+      localStorage.removeItem(PROMO_KEY);
+    } else if(cat === 'commandes'){
+      // Effacer commandes dans chaque client
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(!k || !k.startsWith('ocbd_') || SKIP.has(k)) continue;
+        try{ const u=JSON.parse(localStorage.getItem(k)||'{}'); u.commandes=[]; localStorage.setItem(k,JSON.stringify(u)); }catch(e){}
+      }
+      const reg=JSON.parse(localStorage.getItem(REG_KEY)||'{}');
+      Object.keys(reg).forEach(id=>{ if(reg[id]) reg[id].commandes=[]; });
+      localStorage.setItem(REG_KEY,JSON.stringify(reg));
+    } else if(cat === 'clients'){
+      // Effacer tous les comptes clients + registre
+      const toDelete=[];
+      for(let i=0;i<localStorage.length;i++){
+        const k=localStorage.key(i);
+        if(k && k.startsWith('ocbd_') && !SKIP.has(k)) toDelete.push(k);
+      }
+      toDelete.forEach(k=>localStorage.removeItem(k));
+      localStorage.removeItem(REG_KEY);
+    }
+    loadAll(); renderAvis(); renderCmds(); renderPromos();
+    toast('✅', 'Réinitialisation effectuée');
+  });
+}
+
+function resetTotal(){
+  showConfirm('⚠️ RÉINITIALISATION TOTALE ?', 'Clients, avis, commandes, codes promo — tout sera effacé.', () => {
+    const toDelete=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith('ocbd_') && k !== PIN_KEY) toDelete.push(k);
+    }
+    toDelete.forEach(k=>localStorage.removeItem(k));
+    loadAll(); renderAvis(); renderCmds(); renderPromos();
+    toast('✅','App réinitialisée complètement');
+  });
+}
+
+// ─── HELPERS ───
+function escHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function statutClass(s){
+  if(s==='Confirmée') return 'statut-confirmee';
+  if(s==='Expédiée') return 'statut-expediee';
+  return 'statut-attente';
+}
+
+function statutIcon(s){
+  if(s==='Confirmée') return '✅';
+  if(s==='Expédiée') return '🚚';
+  return '⏳';
+}
+
+// ─── CONFIRM MODAL ───
+function showConfirm(title, sub, onConfirm){
+  const bg = document.createElement('div');
+  bg.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;';
+  bg.innerHTML = `<div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">${title}</div>
+    <div class="confirm-sub">${sub}</div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="this.closest('.confirm-box').parentElement.remove()">Annuler</button>
+      <button class="confirm-ok" id="conf-ok">Supprimer</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  document.getElementById('conf-ok').onclick = () => { bg.remove(); onConfirm(); };
+}
+
+// ─── TOAST ───
+let toastT;
+function toast(ico, msg){
+  document.getElementById('ti').textContent = ico;
+  document.getElementById('tm').textContent = msg;
+  const el = document.getElementById('toast');
+  el.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('on'), 2500);
+}
+
+// ─── START ───
+init();
+</script>
+</body>
+</html>
