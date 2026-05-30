@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#020403" />
+  <meta name="description" content="Origin CBD — L'origine du bien-être. Catalogue CBD professionnel et particulier." />
+  <title>Origin CBD</title>
+
+  <!-- Préconnexion CDN pour perf -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: #020403;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #e8e4dc;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    input, select, button { font-family: inherit; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 3px; }
+    #root { min-height: 100vh; }
+    /* Spinner pendant le chargement de Babel */
+    #loading {
+      position: fixed; inset: 0; background: #020403;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999; gap: 16px;
+    }
+    #loading p { color: #c9a84c; font-size: 13px; letter-spacing: 2px; }
+    .spin {
+      width: 36px; height: 36px; border: 2px solid rgba(201,168,76,0.15);
+      border-top-color: #c9a84c; border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Écran de chargement affiché pendant que Babel compile -->
+  <div id="loading">
+    <div class="spin"></div>
+    <p>ORIGIN CBD</p>
+  </div>
+
+  <div id="root"></div>
+
+  <!-- React 18 — cdnjs (fiable, pas de rate-limit contrairement à unpkg) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"></script>
+
+  <!-- Babel Standalone — compile le JSX côté client -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"></script>
+
+  <script>
+    const _cw = console.warn.bind(console);
+    console.warn = (...args) => {
+      if (args[0] && typeof args[0] === 'string' && args[0].includes('Babel')) return;
+      _cw(...args);
+    };
+  </script>
+
+  <script type="text/babel" data-presets="react">
+const { useState, useRef, useEffect } = React;
+
+function getPoints(q) {
+  const s = String(q).toLowerCase();
+  if (s.includes("e-cig") || s.includes("cigarette")) return 10;
+  if (s.includes("roll") || s.includes("roulé")) return 1;
+  if (s.includes("10g")) return 10;
+  if (s.includes("7g")) return 7;
+  if (s.includes("5g")) return 5;
+  if (s.includes("3,5g") || s.includes("3.5g")) return 3;
+  if (s.includes("3g")) return 3;
+  if (s.includes("2,5g") || s.includes("2.5g")) return 2;
+  if (s.includes("2g")) return 2;
+  if (s.includes("1,5g") || s.includes("1.5g")) return 1;
+  if (s.includes("1g")) return 1;
+  if (s.includes("trim cbd")) return 10;
+  if (s.includes("trim cbn")) return 10;
+  return 1;
+}
+
+const PALIERS = [
+  { pts: 20,  reward: "1g offert au choix" },
+  { pts: 50,  reward: "3g offerts au choix" },
+  { pts: 100, reward: "7g offerts au choix" },
+  { pts: 200, reward: "10g offerts au choix" },
+  { pts: 350, reward: "14g offerts au choix" },
+  { pts: 500, reward: "20g offerts au choix" },
+];
+const NIVEAUX = [
+  { nom:"Bronze", icon:"🥉", min:0,   max:99,      c:"#cd7f32" },
+  { nom:"Argent", icon:"🥈", min:100, max:299,      c:"#b0b8c8" },
+  { nom:"Or",     icon:"🥇", min:300, max:699,      c:"#c9a84c" },
+  { nom:"Clown",  icon:"🤡", min:700, max:Infinity, c:"#a855f7" },
+];
+
+const STORE = { users:[], commandes:[], avis:[], codes:[], demandesPro:[] };
+
+const GOLD="#c9a84c";
+const CARD="rgba(14,16,14,0.85)";
+const BORDER="rgba(201,168,76,0.22)";
+const IS={width:"100%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.13)",color:"#e8e4dc",borderRadius:10,padding:"13px 15px",fontSize:15,outline:"none"};
+const BTN_GOLD={width:"100%",background:`linear-gradient(135deg,#6e4e10,${GOLD})`,color:"#08080a",border:"none",borderRadius:12,padding:"15px",fontSize:15,fontWeight:600,letterSpacing:.4,cursor:"pointer"};
+const BTN_GHOST={width:"100%",background:"transparent",color:"#c0c0c0",border:"1px solid rgba(255,255,255,0.12)",borderRadius:12,padding:"14px",fontSize:14,cursor:"pointer"};
+const BTN_GREEN={width:"100%",background:"linear-gradient(135deg,#14401a,#28703a)",color:"#e0f5e0",border:"none",borderRadius:12,padding:"14px",fontSize:14,fontWeight:600,cursor:"pointer"};
+const BTN_RED={background:"rgba(239,68,68,0.12)",border:"1px solid rgba(239,68,68,0.3)",color:"#f87171",borderRadius:8,padding:"6px 12px",fontSize:12,cursor:"pointer"};
+const THEMES = {
+  green:  { nb:[20,80,28],   st:[180,230,185], sm:[10,160,20],  co:[80,200,90],   bg:"#020403", ref:[10,140,15]  },
+  violet: { nb:[50,10,120],  st:[200,170,255], sm:[80,10,200],  co:[140,60,255],  bg:"#020208", ref:[60,10,180]  },
+  gold:   { nb:[100,70,5],   st:[255,230,160], sm:[180,120,5],  co:[240,190,50],  bg:"#040300", ref:[160,100,5]  },
+  red:    { nb:[120,10,10],  st:[255,180,180], sm:[180,10,10],  co:[230,50,40],   bg:"#040200", ref:[150,10,10]  },
+  white:  { nb:[40,50,60],   st:[220,230,255], sm:[60,80,120],  co:[180,200,240], bg:"#020304", ref:[50,70,100]  },
+};
+
+function GalaxyBg({ theme="green" }) {
+  const ref = useRef(null);
+  const themeRef = useRef(theme);
+  useEffect(() => { themeRef.current = theme; }, [theme]);
+
+  useEffect(() => {
+    const c = ref.current; if (!c) return;
+    const ctx = c.getContext("2d");
+    const W = c.width = window.innerWidth;
+    const H = c.height = window.innerHeight;
+    const stars = Array.from({ length: 700 }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() < 0.04 ? Math.random()*1.6+0.9 : Math.random()*0.55+0.08,
+      phase: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.007 + 0.002,
+      bright: Math.random() < 0.04,
+      tinted: Math.random() < 0.3,
+    }));
+    const smoke = Array.from({ length: 18 }, (_, i) => ({
+      x: W * (0.55 + Math.random()*0.5),
+      y: H * (0.4 + Math.random()*0.45),
+      r: Math.random()*120+80,
+      vx: -(Math.random()*0.18+0.06),
+      vy: -(Math.random()*0.08+0.02),
+      alpha: Math.random()*0.07+0.04,
+      phase: Math.random()*Math.PI*2,
+    }));
+    let t = 0, id;
+
+    function draw() {
+      t += 0.4;
+      const P = THEMES[themeRef.current] || THEMES.green;
+      const [nr,ng,nb] = P.nb;
+      const [sr,sg,sb] = P.st;
+      const [smr,smg,smb] = P.sm;
+      const [cr,cg,cb] = P.co;
+      const [rr,rg,rb] = P.ref;
+      ctx.fillStyle = P.bg;
+      ctx.fillRect(0, 0, W, H);
+      const waterY = H * 0.78;
+      const waterGrad = ctx.createLinearGradient(0, waterY, 0, H);
+      waterGrad.addColorStop(0, `rgba(${rr},${rg},${rb},0)`);
+      waterGrad.addColorStop(0.3, `rgba(${rr},${rg},${rb},0.18)`);
+      waterGrad.addColorStop(0.7, `rgba(${rr},${rg},${rb},0.32)`);
+      waterGrad.addColorStop(1, `rgba(${rr},${rg},${rb},0.12)`);
+      ctx.fillStyle = waterGrad;
+      ctx.fillRect(0, waterY, W, H - waterY);
+      for (let i = 0; i < 12; i++) {
+        const wy = waterY + (i / 12) * (H - waterY);
+        const wave = Math.sin(t * 0.03 + i * 0.8) * 6;
+        const lineAlpha = (0.04 - i * 0.003) * (i % 2 === 0 ? 1 : 0.4);
+        if (lineAlpha <= 0) continue;
+        ctx.strokeStyle = `rgba(${rr},${rg+20},${rb},${lineAlpha})`;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(0, wy + wave); ctx.lineTo(W, wy - wave); ctx.stroke();
+      }
+      const angle = 38 * Math.PI / 180;
+      const cos = Math.cos(angle), sin = Math.sin(angle);
+      const px = W * 0.52, py = H * 0.42;
+      const len = Math.max(W, H) * 2.4;
+      [
+        { off:0,   hw:280, a:0.04  },
+        { off:-20, hw:180, a:0.07  },
+        { off:15,  hw:130, a:0.06  },
+        { off:0,   hw:90,  a:0.10  },
+        { off:-8,  hw:55,  a:0.13  },
+        { off:4,   hw:30,  a:0.16  },
+        { off:0,   hw:14,  a:0.20  }, // cœur brillant
+        { off:0,   hw:5,   a:0.14  }, // filament central blanc
+      ].forEach(({ off, hw, a }, li) => {
+        const ox = sin * off, oy = -cos * off;
+        const rr2 = li >= 6 ? cr : nr;
+        const gg2 = li >= 6 ? cg : ng;
+        const bb2 = li >= 6 ? cb : nb;
+        const gP = ctx.createLinearGradient(
+          px+ox+sin*hw, py+oy-cos*hw,
+          px+ox-sin*hw, py+oy+cos*hw
+        );
+        gP.addColorStop(0,   "rgba(0,0,0,0)");
+        gP.addColorStop(0.3, `rgba(${rr2},${gg2},${bb2},${a*0.35})`);
+        gP.addColorStop(0.5, `rgba(${rr2},${gg2},${bb2},${a})`);
+        gP.addColorStop(0.7, `rgba(${rr2},${gg2},${bb2},${a*0.35})`);
+        gP.addColorStop(1,   "rgba(0,0,0,0)");
+        ctx.fillStyle = gP; ctx.fillRect(0,0,W,H);
+      });
+      [
+        {tp:0.22,pp:10,  r:45,a:0.16},{tp:0.35,pp:-18,r:32,a:0.14},
+        {tp:0.48,pp:6,   r:55,a:0.18},{tp:0.56,pp:-10,r:28,a:0.13},
+        {tp:0.65,pp:20,  r:38,a:0.12},{tp:0.76,pp:-4, r:22,a:0.14},
+        {tp:0.28,pp:-28, r:20,a:0.10},{tp:0.70,pp:28, r:30,a:0.11},
+      ].forEach(({tp,pp,r,a})=>{
+        const along = tp - 0.5;
+        const cx2 = px + cos*along*len*0.85 + sin*pp;
+        const cy2 = py + sin*along*len*0.85 - cos*pp;
+        const sc = (W/380);
+        const ng2 = ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,r*sc);
+        ng2.addColorStop(0,   `rgba(${cr},${cg},${cb},${a})`);
+        ng2.addColorStop(0.4, `rgba(${nr},${ng},${nb},${a*0.5})`);
+        ng2.addColorStop(1,   "rgba(0,0,0,0)");
+        ctx.fillStyle = ng2; ctx.fillRect(0,0,W,H);
+      });
+      smoke.forEach(s => {
+        s.x += s.vx; s.y += s.vy;
+        if (s.x < -s.r) { s.x = W + s.r; s.y = H*(0.4+Math.random()*0.45); }
+        if (s.y < -s.r) { s.y = H + s.r; }
+        const pulse = 0.7 + 0.3*Math.sin(t*0.015 + s.phase);
+        const sg2 = ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*pulse);
+        sg2.addColorStop(0,   `rgba(${smr},${smg},${smb},${s.alpha})`);
+        sg2.addColorStop(0.5, `rgba(${smr},${smg},${smb},${s.alpha*0.4})`);
+        sg2.addColorStop(1,   "rgba(0,0,0,0)");
+        ctx.fillStyle = sg2; ctx.fillRect(0,0,W,H);
+      });
+      const sg3 = ctx.createRadialGradient(W*0.08,H*0.88,0,W*0.08,H*0.88,W*0.22);
+      sg3.addColorStop(0,   `rgba(${smr},${smg},${smb},0.10)`);
+      sg3.addColorStop(0.5, `rgba(${smr},${smg},${smb},0.04)`);
+      sg3.addColorStop(1,   "rgba(0,0,0,0)");
+      ctx.fillStyle = sg3; ctx.fillRect(0,0,W,H);
+      stars.forEach(s => {
+        const al = (Math.sin(s.phase + t*s.speed)+1)/2;
+        const alpha = s.bright ? 0.5+al*0.5 : 0.12+al*0.7;
+        const er = s.tinted ? sr : 210;
+        const eg = s.tinted ? sg : 225;
+        const eb = s.tinted ? sb : 245;
+
+        if (s.bright) {
+          const hg = ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*5);
+          hg.addColorStop(0, `rgba(${er},${eg},${eb},${al*0.4})`);
+          hg.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = hg;
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r*5,0,Math.PI*2); ctx.fill();
+          const rl = s.r*7;
+          ctx.strokeStyle = `rgba(${er},${eg},${eb},${al*0.22})`;
+          ctx.lineWidth = 0.4;
+          ctx.beginPath(); ctx.moveTo(s.x-rl,s.y); ctx.lineTo(s.x+rl,s.y); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(s.x,s.y-rl); ctx.lineTo(s.x,s.y+rl); ctx.stroke();
+        }
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fillStyle = `rgba(${er},${eg},${eb},${alpha})`; ctx.fill();
+      });
+
+      id = requestAnimationFrame(draw);
+    }
+
+    draw();
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  return <canvas ref={ref} style={{position:"fixed",inset:0,zIndex:0,width:"100vw",height:"100vh",pointerEvents:"none"}}/>;
+}
+
+function Card({children,style}){return <div style={{background:CARD,border:`1px solid ${BORDER}`,borderRadius:16,padding:"18px 16px",backdropFilter:"blur(10px)",...style}}>{children}</div>;}
+
+function Header({title,onBack,right}){return(
+  <div style={{position:"sticky",top:0,zIndex:40,background:"rgba(6,7,10,0.94)",borderBottom:"1px solid rgba(201,168,76,0.13)",backdropFilter:"blur(14px)",padding:"14px 16px",display:"flex",alignItems:"center",gap:12}}>
+    {onBack&&<button onClick={onBack} style={{background:"none",border:"none",color:GOLD,fontSize:24,padding:0,lineHeight:1,cursor:"pointer"}}>‹</button>}
+    <h2 style={{flex:1,fontFamily:"Georgia,serif",fontSize:22,color:"#e8e4dc",fontWeight:600}}>{title}</h2>
+    {right}
+  </div>
+);}
+function AgeGate({onAccept}){
+  const [checked,setChecked]=useState(false); const [err,setErr]=useState(false);
+  return(
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div style={{width:"100%",maxWidth:400,textAlign:"center"}}>
+        <div style={{fontSize:54,marginBottom:16}}>🔞</div>
+        <h1 style={{fontFamily:"Georgia,serif",fontSize:40,color:GOLD,fontWeight:600,letterSpacing:2,marginBottom:6}}>Origin CBD</h1>
+        <p style={{color:"#a0a0a0",fontSize:12,letterSpacing:3,marginBottom:30}}>— L'origine du bien-être —</p>
+        <Card>
+          <h2 style={{fontSize:20,fontWeight:600,color:"#e8e4dc",marginBottom:10}}>Vérification d'âge</h2>
+          <p style={{color:"#c0c0c0",fontSize:14,lineHeight:1.7,marginBottom:20}}>Ce site est réservé aux personnes <span style={{color:GOLD,fontWeight:600}}>majeures (+18 ans).</span></p>
+          <label style={{display:"flex",alignItems:"flex-start",gap:12,background:"rgba(255,255,255,0.04)",border:`1px solid ${err?"rgba(239,68,68,0.5)":BORDER}`,borderRadius:10,padding:"14px 16px",cursor:"pointer",textAlign:"left",marginBottom:16}}>
+            <div onClick={()=>{setChecked(!checked);setErr(false);}} style={{width:20,height:20,border:`2px solid ${checked?GOLD:"rgba(255,255,255,0.25)"}`,borderRadius:5,background:checked?GOLD:"transparent",flexShrink:0,marginTop:1,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
+              {checked&&<span style={{color:"#08080a",fontSize:13,fontWeight:700}}>✓</span>}
+            </div>
+            <span style={{color:"#d8d8d8",fontSize:14,lineHeight:1.5}}>J'ai 18 ans ou plus et j'accepte les conditions d'utilisation</span>
+          </label>
+          {err&&<p style={{color:"#f87171",fontSize:13,marginBottom:10}}>Veuillez cocher la case.</p>}
+          <button onClick={()=>{if(!checked){setErr(true);return;}onAccept();}} style={BTN_GOLD}>Entrer sur le site →</button>
+          <p style={{color:"#909090",fontSize:11,marginTop:14,lineHeight:1.6}}>⚠️ La vente de CBD est interdite aux mineurs. THC &lt; 0,3%</p>
+        </Card>
+      </div>
+    </div>
+  );
+}
+function Welcome({onUser,onGuest,onManager,store}){
+  const saved = (() => { try { return JSON.parse(localStorage.getItem("origincbd_user")||"{}"); } catch(e){return {};} })();
+  const [prenom,setPrenom]=useState(saved.prenom||"");
+  const [email,setEmail]=useState(saved.email||"");
+  const [mgCode,setMgCode]=useState(""); const [showMg,setShowMg]=useState(false);
+  const [err,setErr]=useState(""); const [mgErr,setMgErr]=useState("");
+  function go(){
+    if(!prenom.trim()||!email.trim()){setErr("Veuillez remplir tous les champs.");return;}
+    if(!email.includes("@")){setErr("Email invalide.");return;}
+    let u=store.users.find(x=>x.email===email);
+    if(!u){u={prenom:prenom.trim(),email,points:0,historique:[]};store.users.push(u);}
+    try { localStorage.setItem("origincbd_user", JSON.stringify({prenom:prenom.trim(),email})); } catch(e){}
+    onUser(u);
+  }
+  return(
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px 20px"}}>
+      <div style={{textAlign:"center",marginBottom:32}}>
+        <h1 style={{fontFamily:"Georgia,serif",fontSize:44,color:GOLD,fontWeight:600,letterSpacing:2,marginBottom:4}}>Origin CBD</h1>
+        <p style={{color:"#a0a0a0",fontSize:12,letterSpacing:3}}>— L'origine du bien-être —</p>
+      </div>
+      <Card style={{width:"100%",maxWidth:400}}>
+        <h2 style={{fontSize:18,fontWeight:600,color:"#e8e4dc",marginBottom:20,textAlign:"center"}}>Bienvenue</h2>
+        <input placeholder="Votre prénom" value={prenom} onChange={e=>{setPrenom(e.target.value);setErr("");}} style={{...IS,marginBottom:12}}/>
+        <input placeholder="Votre adresse email" type="email" value={email} onChange={e=>{setEmail(e.target.value);setErr("");}} onKeyDown={e=>e.key==="Enter"&&go()} style={{...IS,marginBottom:err?8:16}}/>
+        {err&&<p style={{color:"#f87171",fontSize:13,marginBottom:12}}>{err}</p>}
+        <button onClick={go} style={BTN_GOLD}>Accéder au catalogue</button>
+        <div style={{textAlign:"center",margin:"14px 0",color:"#8a8a8a",fontSize:13}}>— ou —</div>
+        <button onClick={onGuest} style={BTN_GHOST}>Parcourir sans compte</button>
+        <div style={{borderTop:"1px solid rgba(255,255,255,0.07)",marginTop:20,paddingTop:16}}>
+          <button onClick={()=>setShowMg(!showMg)} style={{background:"none",border:"none",color:"#909090",fontSize:11,letterSpacing:1,cursor:"pointer"}}>🔐 Accès gérant</button>
+          {showMg&&<>
+            <input placeholder="Code gérant" type="password" value={mgCode} onChange={e=>{setMgCode(e.target.value);setMgErr("");}} onKeyDown={e=>e.key==="Enter"&&(mgCode==="35353010"?onManager():setMgErr("Code incorrect"))} style={{...IS,marginTop:10,marginBottom:mgErr?6:10,textAlign:"center",letterSpacing:6,fontSize:20}}/>
+            {mgErr&&<p style={{color:"#f87171",fontSize:13,marginBottom:8}}>{mgErr}</p>}
+            <button onClick={()=>mgCode==="35353010"?onManager():setMgErr("Code incorrect")} style={BTN_GOLD}>Valider</button>
+          </>}
+        </div>
+      </Card>
+    </div>
+  );
+}
+function BottomNav({tab,setTab,onQuit}){
+  const items=[
+    {id:"particulier",icon:"🛍️",label:"Particuliers"},
+    {id:"pro",icon:"💼",label:"Pro"},
+    {id:"fidelite",icon:"🏆",label:"Fidélité"},
+    {id:"scanner",icon:"📱",label:"Scanner"},
+  ];
+  return(
+    <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:50,background:"rgba(6,7,10,0.96)",borderTop:"1px solid rgba(201,168,76,0.15)",backdropFilter:"blur(14px)",display:"flex"}}>
+      {items.map(it=>(
+        <button key={it.id} onClick={()=>setTab(it.id)} style={{flex:1,background:"none",border:"none",color:tab===it.id?GOLD:"#a0a0a0",padding:"10px 2px 12px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer"}}>
+          <span style={{fontSize:19}}>{it.icon}</span>
+          <span style={{fontSize:9,letterSpacing:.4,fontWeight:tab===it.id?600:400}}>{it.label}</span>
+        </button>
+      ))}
+      <button onClick={onQuit} style={{flex:1,background:"none",border:"none",color:"#a0a0a0",padding:"10px 2px 12px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer"}}>
+        <span style={{fontSize:19}}>↩️</span>
+        <span style={{fontSize:9,letterSpacing:.4}}>Quitter</span>
+      </button>
+    </div>
+  );
+}
+const SECTIONS_PART = [
+  {
+    id:"light", label:"🌱 LIGHT ÉDITION", badge:"Offre promo", badgeColor:"#e8a020",
+    desc:"Fleurs CBD sélectionnées pour leur excellent rapport qualité/prix.",
+    note:"THC < 0,3% · CBD · Légal en France",
+    bg:"linear-gradient(135deg,#1a3a1a,#0e2010)", borderColor:"rgba(80,180,60,0.35)",
+    groupes:[
+      { label:"🌿 FLEURS CBD", labelColor:"#5aba60", labelBg:"rgba(40,120,40,0.2)", labelBorder:"rgba(60,160,50,0.35)",
+        produits:[{ id:"light_f", type:"Fleurs CBD",
+          sachetBg:"linear-gradient(135deg,#d040a0,#a020c0,#60c040)", sachetBorder:"rgba(200,80,180,0.7)",
+          formats:[{q:"1,5g",p:4},{q:"3,5g",p:10},{q:"7g",p:20},{q:"10g",p:25}] }]
+      }
+    ]
+  },
+  {
+    id:"bronze", label:"🥉 BRONZE ÉDITION", badge:"", badgeColor:"",
+    desc:"Produits sélectionnés avec passion, adaptés aux bureaux de tabac.",
+    note:"THC < 0,3% · CBD · Légal en France",
+    bg:"linear-gradient(135deg,#2a1a08,#1a1005)", borderColor:"rgba(180,110,50,0.35)",
+    groupes:[
+      { label:"🌿 FLEURS CBD", labelColor:"#5aba60", labelBg:"rgba(40,120,40,0.2)", labelBorder:"rgba(60,160,50,0.35)",
+        produits:[{ id:"bronze_f", type:"Fleurs CBD",
+          sachetBg:"linear-gradient(135deg,#c07030,#8a4010,#c07030)", sachetBorder:"rgba(180,110,50,0.7)",
+          formats:[{q:"1g",p:4},{q:"3g",p:10},{q:"5g",p:20},{q:"10g",p:35}] }]
+      },
+      { label:"🍫 RÉSINE CBD", labelColor:"#c8804a", labelBg:"rgba(100,55,20,0.2)", labelBorder:"rgba(150,90,35,0.35)",
+        produits:[{ id:"bronze_r", type:"Résine CBD",
+          sachetBg:"linear-gradient(135deg,#6a3a10,#4a2008,#6a3a10)", sachetBorder:"rgba(130,80,30,0.7)",
+          formats:[{q:"1g",p:4},{q:"3g",p:10},{q:"5g",p:20},{q:"10g",p:35}] }]
+      }
+    ]
+  },
+  {
+    id:"silver", label:"🥈 SILVER ÉDITION", badge:"", badgeColor:"",
+    desc:"Référence à forte rotation en point de vente.",
+    note:"THC < 0,3% · CBD · Légal en France",
+    bg:"linear-gradient(135deg,#141820,#0c1018)", borderColor:"rgba(140,155,185,0.35)",
+    groupes:[
+      { label:"🌿 FLEURS CBD", labelColor:"#5aba60", labelBg:"rgba(40,120,40,0.2)", labelBorder:"rgba(60,160,50,0.35)",
+        produits:[{ id:"silver_f", type:"Fleurs CBD",
+          sachetBg:"linear-gradient(135deg,#b0b8c8,#788090,#c0c8d8)", sachetBorder:"rgba(180,190,210,0.7)",
+          formats:[{q:"1g",p:6},{q:"3g",p:20},{q:"5g",p:30},{q:"10g",p:40}] }]
+      },
+      { label:"🍫 RÉSINE CBD", labelColor:"#9098a8", labelBg:"rgba(100,110,130,0.2)", labelBorder:"rgba(140,155,185,0.35)",
+        produits:[{ id:"silver_r", type:"Résine CBD",
+          sachetBg:"linear-gradient(135deg,#909aaa,#606878,#909aaa)", sachetBorder:"rgba(150,160,185,0.7)",
+          formats:[{q:"1g",p:6},{q:"3g",p:20},{q:"5g",p:30},{q:"10g",p:40}] }]
+      }
+    ]
+  },
+  {
+    id:"gold", label:"🥇 GOLD ÉDITION", badge:"CBN+ 2x filtré", badgeColor:"#c9a84c",
+    desc:"Fleurs et résines CBN+ Gold 2x filtré — haut de gamme, forte demande.",
+    note:"THC < 0,3% · CBN+ 2x filtré · Sachet doré",
+    bg:"linear-gradient(135deg,#1e160a,#140e04)", borderColor:"rgba(201,168,76,0.4)",
+    groupes:[
+      { label:"🌿 FLEURS CBN+", labelColor:"#c9a84c", labelBg:"rgba(180,140,30,0.2)", labelBorder:"rgba(201,168,76,0.4)",
+        produits:[{ id:"gold_f", type:"Fleurs CBN+ Gold",
+          sachetBg:"linear-gradient(135deg,#e8c060,#c09010,#e8c060)", sachetBorder:"rgba(220,185,80,0.75)",
+          formats:[{q:"1g",p:8},{q:"3g",p:20},{q:"10g",p:50}] }]
+      },
+      { label:"🍫 RÉSINE CBN+", labelColor:"#c9a84c", labelBg:"rgba(160,120,20,0.2)", labelBorder:"rgba(190,155,50,0.4)",
+        produits:[{ id:"gold_r", type:"Résine CBN+ Gold",
+          sachetBg:"linear-gradient(135deg,#d4a020,#a07010,#d4a020)", sachetBorder:"rgba(200,165,50,0.75)",
+          formats:[{q:"1g",p:8},{q:"3g",p:20},{q:"10g",p:50}] }]
+      }
+    ]
+  },
+  {
+    id:"platinum", label:"💎 PLATINUM ÉDITION", badge:"CBN+ 3x filtré", badgeColor:"#c084fc",
+    desc:"Fleurs et résines CBN+ Platinum 3x filtré — qualité supérieure, packaging holographique.",
+    note:"THC < 0,3% · CBN+ 3x filtré · Sachet holographique",
+    bg:"linear-gradient(135deg,#180828,#0e0418)", borderColor:"rgba(160,80,220,0.4)",
+    groupes:[
+      { label:"🌿 FLEURS CBN+", labelColor:"#c084fc", labelBg:"rgba(120,50,180,0.2)", labelBorder:"rgba(160,80,220,0.35)",
+        produits:[{ id:"plat_f", type:"Fleurs CBN+ Platinum",
+          sachetBg:"linear-gradient(135deg,#a040e0,#6020b0,#c060f0)", sachetBorder:"rgba(180,100,255,0.75)",
+          formats:[{q:"1g",p:8},{q:"2,5g",p:20},{q:"7g",p:50}] }]
+      },
+      { label:"🍫 RÉSINE CBN+", labelColor:"#c084fc", labelBg:"rgba(100,40,160,0.2)", labelBorder:"rgba(140,60,200,0.35)",
+        produits:[{ id:"plat_r", type:"Résine CBN+ Platinum",
+          sachetBg:"linear-gradient(135deg,#a040e0,#4080ff,#e040a0,#40d080)", sachetBorder:"rgba(160,100,255,0.75)",
+          formats:[{q:"1g",p:8},{q:"2,5g",p:20},{q:"7g",p:50}] }]
+      }
+    ]
+  },
+  {
+    id:"trim", label:"🌿 TRIM PREMIUM", badge:"", badgeColor:"",
+    desc:"Produit économique avec forte rotation. Prix très compétitif.",
+    note:"Très forte demande en boutique CBD",
+    bg:"linear-gradient(135deg,#0e1e0a,#081408)", borderColor:"rgba(70,160,50,0.3)",
+    groupes:[
+      { label:"🌿 TRIM", labelColor:"#5aba60", labelBg:"rgba(40,110,30,0.2)", labelBorder:"rgba(70,160,50,0.35)",
+        produits:[
+          { id:"trim_cbd", type:"Trim CBD",
+            sachetBg:"linear-gradient(135deg,#2a7020,#184010,#2a7020)", sachetBorder:"rgba(60,150,40,0.7)",
+            formats:[{q:"10g",p:10}] },
+          { id:"trim_cbn", type:"Trim CBN+",
+            sachetBg:"linear-gradient(135deg,#408030,#285018,#408030)", sachetBorder:"rgba(80,170,60,0.7)",
+            formats:[{q:"10g",p:30}] }
+        ]
+      }
+    ]
+  },
+  {
+    id:"preroll", label:"🚬 PRÉ-ROULÉS", badge:"Prêts à l'emploi", badgeColor:"#b09040",
+    desc:"Boîte de 50 pré-roulés prêts à l'emploi, sans nicotine.",
+    note:"CBD classique ou CBN+",
+    bg:"linear-gradient(135deg,#1a1508,#100e04)", borderColor:"rgba(160,130,50,0.3)",
+    groupes:[
+      { label:"🚬 PRÉ-ROULÉS", labelColor:"#b09040", labelBg:"rgba(140,110,30,0.2)", labelBorder:"rgba(170,140,50,0.35)",
+        produits:[
+          { id:"preroll_cbd", type:"CBD classique",
+            sachetBg:"linear-gradient(135deg,#d8d0b0,#b0a880,#d8d0b0)", sachetBorder:"rgba(200,185,140,0.7)",
+            formats:[{q:"1 pré-roulé",p:3}] },
+          { id:"preroll_cbn", type:"CBN+ Platinum",
+            sachetBg:"linear-gradient(135deg,#1a0828,#300850,#1a0828)", sachetBorder:"rgba(160,80,220,0.7)",
+            formats:[{q:"1 pré-roulé",p:6}] }
+        ]
+      }
+    ]
+  },
+  {
+    id:"ecig", label:"🔌 E-CIGARETTE CBN+", badge:"CBN+", badgeColor:"#c084fc",
+    desc:"Cigarette électronique CBN+ Origin CBD — sans nicotine, sans additifs. Recharges disponibles.",
+    note:"CBN+ · Sans nicotine · Sans additifs",
+    bg:"linear-gradient(135deg,#180828,#0e0418)", borderColor:"rgba(160,80,220,0.35)",
+    groupes:[
+      { label:"🔌 E-CIGARETTE CBN+", labelColor:"#c084fc", labelBg:"rgba(120,50,180,0.2)", labelBorder:"rgba(160,80,220,0.35)",
+        produits:[
+          { id:"ecig_u", type:"E-Cigarette CBN+",
+            sachetBg:"linear-gradient(135deg,#2a0840,#180428,#a040e0,#2a0840)", sachetBorder:"rgba(160,80,220,0.7)",
+            formats:[{q:"1 unité",p:25}] },
+          { id:"ecig_r", type:"Recharge CBN+",
+            sachetBg:"linear-gradient(135deg,#1a0630,#0e0220,#8030c0,#1a0630)", sachetBorder:"rgba(130,60,190,0.65)",
+            formats:[{q:"1 recharge",p:20}] }
+        ]
+      }
+    ]
+  }
+];
+
+function ApporteurBanner({store, forceUpdate}){
+  const [open,setOpen]=useState(false);
+  const [ok,setOk]=useState(false);
+  const [f,setF]=useState({prenom:"",tel:"",email:"",info:""});
+  const [err,setErr]=useState("");
+
+  function submit(){
+    if(!f.prenom.trim()||!f.tel.trim()){setErr("Prénom et téléphone obligatoires.");return;}
+    store.demandesPro.push({
+      ...f, type:"apporteur",
+      date:new Date().toLocaleDateString("fr-FR"),
+      statut:"attente"
+    });
+    setOk(true); setErr("");
+  }
+
+  return(
+    <div style={{margin:"10px 14px 0"}}>
+      <div style={{background:"linear-gradient(135deg,rgba(100,80,0,0.6),rgba(140,110,0,0.45))",border:"1px solid rgba(251,191,36,0.4)",borderRadius:open?"12px 12px 0 0":12,padding:"13px 14px",boxShadow:"0 0 18px rgba(251,191,36,0.1)"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div style={{flex:1}}>
+            <p style={{color:"#fbbf24",fontWeight:700,fontSize:13,marginBottom:3}}>🤝 Apporteur d'affaires</p>
+            <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+              <span style={{background:"rgba(251,191,36,0.15)",border:"1px solid rgba(251,191,36,0.45)",borderRadius:20,padding:"2px 9px",color:"#fbbf24",fontSize:11,fontWeight:700}}>50€ à la signature</span>
+              <span style={{background:"rgba(251,191,36,0.15)",border:"1px solid rgba(251,191,36,0.45)",borderRadius:20,padding:"2px 9px",color:"#fbbf24",fontSize:11,fontWeight:700}}>2% sur 3 mois</span>
+            </div>
+          </div>
+          <button onClick={()=>{setOpen(o=>!o);setOk(false);setErr("");}} style={{background:"rgba(251,191,36,0.18)",border:"1px solid rgba(251,191,36,0.5)",borderRadius:9,padding:"8px 13px",color:"#fbbf24",fontSize:12,fontWeight:700,cursor:"pointer",flexShrink:0,marginLeft:10}}>
+            {open?"Fermer":"Envoyer une demande →"}
+          </button>
+        </div>
+        <p style={{color:"#a08820",fontSize:11,marginTop:5}}>Tu connais un commerçant intéressé par le CBD ? Signale-le nous, on s'occupe du reste.</p>
+      </div>
+      {open&&(
+        <div style={{background:"rgba(14,6,2,0.97)",border:"1px solid rgba(232,115,74,0.28)",borderTopWidth:0,borderRadius:"0 0 12px 12px",padding:"14px"}}>
+          {ok?(
+            <div style={{textAlign:"center",padding:"16px 0"}}>
+              <div style={{fontSize:38,marginBottom:10}}>✅</div>
+              <p style={{color:"#5aba60",fontWeight:700,fontSize:14,marginBottom:6}}>Demande envoyée !</p>
+              <p style={{color:"#909090",fontSize:12,lineHeight:1.6}}>On vous contacte rapidement.<br/>Merci pour votre confiance !</p>
+              <button onClick={()=>{setOpen(false);setOk(false);setF({prenom:"",tel:"",email:"",info:""});}} style={{...BTN_GREEN,marginTop:14,fontSize:12}}>Fermer</button>
+            </div>
+          ):(
+            <>
+              <p style={{color:"#6ed878",fontSize:11,fontWeight:700,letterSpacing:1,marginBottom:12}}>VOS COORDONNÉES</p>
+              {[
+                {label:"PRÉNOM / NOM *",key:"prenom",placeholder:"Votre prénom et nom",type:"text"},
+                {label:"TÉLÉPHONE *",key:"tel",placeholder:"06 xx xx xx xx",type:"tel"},
+                {label:"EMAIL",key:"email",placeholder:"votre@email.com (optionnel)",type:"email"},
+                {label:"NOM DU COMMERÇANT À CONTACTER",key:"info",placeholder:"Nom, type de commerce, ville…",type:"text"},
+              ].map(fi=>(
+                <div key={fi.key}>
+                  <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:4}}>{fi.label}</p>
+                  <input placeholder={fi.placeholder} type={fi.type} value={f[fi.key]}
+                    onChange={e=>setF({...f,[fi.key]:e.target.value})}
+                    style={{...IS,marginBottom:10,fontSize:13}}/>
+                </div>
+              ))}
+              {err&&<p style={{color:"#f87171",fontSize:12,marginBottom:10}}>{err}</p>}
+              <button onClick={submit} style={{...BTN_GREEN,fontSize:13}}>🤝 Envoyer ma demande →</button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AvisForm({store, user}){
+  const [open,setOpen]=useState(false);
+  const [ok,setOk]=useState(false);
+  const [note,setNote]=useState(5);
+  const [auteur,setAuteur]=useState(user?.prenom||"");
+  const [texte,setTexte]=useState("");
+  const [produit,setProduit]=useState("");
+  const [err,setErr]=useState("");
+
+  function submit(){
+    if(!auteur.trim()||!texte.trim()){setErr("Nom et commentaire obligatoires.");return;}
+    if(texte.trim().length<10){setErr("Commentaire trop court (10 caractères min).");return;}
+    store.avis.push({
+      auteur:auteur.trim(), note, texte:texte.trim(), produit,
+      date:new Date().toLocaleDateString("fr-FR"),
+      statut:"attente", // doit être validé par le gérant
+    });
+    setOk(true); setErr("");
+  }
+
+  if(ok) return(
+    <div style={{margin:"12px 0 0",background:"rgba(74,180,80,0.1)",border:"1px solid rgba(74,180,80,0.3)",borderRadius:14,padding:"18px",textAlign:"center"}}>
+      <div style={{fontSize:36,marginBottom:8}}>⭐</div>
+      <p style={{color:"#5aba60",fontWeight:700,fontSize:14,marginBottom:4}}>Merci pour votre avis !</p>
+      <p style={{color:"#909090",fontSize:12,lineHeight:1.6}}>Votre avis est en cours de validation.<br/>Il sera publié après vérification.</p>
+      <button onClick={()=>{setOk(false);setOpen(false);setTexte("");setNote(5);setProduit("");}} style={{...BTN_GREEN,marginTop:12,fontSize:12}}>Fermer</button>
+    </div>
+  );
+
+  return(
+    <div style={{margin:"14px 0 0",background:"linear-gradient(135deg,rgba(201,168,76,0.08),rgba(160,120,20,0.05))",border:`1px solid ${BORDER}`,borderRadius:14,overflow:"hidden"}}>
+      <button onClick={()=>setOpen(o=>!o)} style={{width:"100%",background:"none",border:"none",padding:"14px 16px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",textAlign:"left"}}>
+        <span style={{fontSize:22}}>⭐</span>
+        <div style={{flex:1}}>
+          <p style={{color:"#e8e4dc",fontWeight:700,fontSize:13}}>Laisser un avis</p>
+          <p style={{color:"#909090",fontSize:11,marginTop:1}}>Partagez votre expérience Origin CBD</p>
+        </div>
+        <span style={{color:open?GOLD:"#555",fontSize:16}}>{open?"∧":"›"}</span>
+      </button>
+
+      {open&&(
+        <div style={{padding:"0 16px 16px"}}>
+          <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:8}}>VOTRE NOTE</p>
+          <div style={{display:"flex",gap:8,marginBottom:14}}>
+            {[1,2,3,4,5].map(n=>(
+              <button key={n} onClick={()=>setNote(n)} style={{
+                background:"none",border:"none",cursor:"pointer",
+                fontSize:32,opacity:n<=note?1:0.25,
+                filter:n<=note?"drop-shadow(0 0 4px #fbbf24)":"none",
+                transition:"all 0.15s",padding:0,
+              }}>⭐</button>
+            ))}
+            <span style={{color:GOLD,fontWeight:700,fontSize:14,alignSelf:"center",marginLeft:4}}>{note}/5</span>
+          </div>
+          <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:4}}>VOTRE NOM *</p>
+          <input placeholder="Prénom ou pseudo" value={auteur} onChange={e=>{setAuteur(e.target.value);setErr("");}}
+            style={{...IS,marginBottom:10,fontSize:13}}/>
+          <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:4}}>PRODUIT ACHETÉ (optionnel)</p>
+          <input placeholder="Ex: Gold Résine 3g, Trim CBN+..." value={produit} onChange={e=>setProduit(e.target.value)}
+            style={{...IS,marginBottom:10,fontSize:13}}/>
+          <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:4}}>VOTRE AVIS *</p>
+          <textarea placeholder="Partagez votre expérience (qualité, livraison, service...)" value={texte}
+            onChange={e=>{setTexte(e.target.value);setErr("");}}
+            style={{...IS,minHeight:90,resize:"none",lineHeight:1.6,fontSize:13,marginBottom:10}}/>
+
+          {err&&<p style={{color:"#f87171",fontSize:12,marginBottom:10}}>{err}</p>}
+
+          <p style={{color:"#555",fontSize:10,fontStyle:"italic",marginBottom:10}}>
+            ✏️ Votre avis sera vérifié avant publication.
+          </p>
+          <button onClick={submit} style={BTN_GOLD}>Envoyer mon avis ⭐</button>
+          <button onClick={()=>setOpen(false)} style={{...BTN_GHOST,marginTop:8,fontSize:12}}>Annuler</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CommandeForm({cart, total, user, onDone, store, forceUpdate}){
+  const [open,setOpen]=useState(false);
+  const [ok,setOk]=useState(false);
+  const [prenom,setPrenom]=useState(user?.prenom||"");
+  const [tel,setTel]=useState("");
+  const [note,setNote]=useState("");
+  const [err,setErr]=useState("");
+
+  function submit(){
+    if(!prenom.trim()||!tel.trim()){setErr("Prénom et téléphone obligatoires.");return;}
+    const lignes = cart.map(it=>`${it.label} — ${it.format.q} ×${it.qte} = ${it.format.p*it.qte}€`).join(" | ");
+    store.commandes.push({
+      prenom:prenom.trim(), tel, note,
+      total:total+"€", detail:lignes,
+      date:new Date().toLocaleDateString("fr-FR"),
+      statut:"nouvelle",
+    });
+    if(forceUpdate) forceUpdate();
+    setOk(true); setErr("");
+  }
+
+  if(ok) return(
+    <div style={{marginTop:14,background:"rgba(74,180,80,0.1)",border:"1px solid rgba(74,180,80,0.3)",borderRadius:12,padding:"18px",textAlign:"center"}}>
+      <div style={{fontSize:36,marginBottom:8}}>✅</div>
+      <p style={{color:"#5aba60",fontWeight:700,fontSize:15,marginBottom:4}}>Commande envoyée !</p>
+      <p style={{color:"#a0a0a0",fontSize:12,lineHeight:1.6}}>Nous vous contactons sous 24h.<br/>origincbd1900@gmail.com</p>
+      <button onClick={()=>{setOk(false);setOpen(false);onDone();}} style={{...BTN_GREEN,marginTop:14,fontSize:13}}>Fermer</button>
+    </div>
+  );
+
+  if(!open) return(
+    <button onClick={()=>setOpen(true)} style={{...BTN_GOLD,marginTop:14}}>
+      Passer commande →
+    </button>
+  );
+
+  return(
+    <div style={{marginTop:14,borderTop:`1px solid ${BORDER}`,paddingTop:14}}>
+      <p style={{color:GOLD,fontWeight:700,fontSize:13,marginBottom:12}}>📋 Vos coordonnées</p>
+      <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:4}}>PRÉNOM / NOM *</p>
+      <input placeholder="Votre prénom et nom" value={prenom} onChange={e=>{setPrenom(e.target.value);setErr("");}}
+        style={{...IS,marginBottom:10,fontSize:13}}/>
+      <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:4}}>TÉLÉPHONE *</p>
+      <input placeholder="06 xx xx xx xx" type="tel" value={tel} onChange={e=>{setTel(e.target.value);setErr("");}}
+        style={{...IS,marginBottom:10,fontSize:13}}/>
+      <p style={{color:"#909090",fontSize:10,letterSpacing:1,marginBottom:4}}>NOTE (optionnel)</p>
+      <input placeholder="Remarque, adresse de livraison..." value={note} onChange={e=>setNote(e.target.value)}
+        style={{...IS,marginBottom:14,fontSize:13}}/>
+      {err&&<p style={{color:"#f87171",fontSize:12,marginBottom:10}}>{err}</p>}
+      <button onClick={submit} style={BTN_GOLD}>Confirmer la commande →</button>
+      <button onClick={()=>setOpen(false)} style={{...BTN_GHOST,marginTop:8,fontSize:13}}>Annuler</button>
+    </div>
+  );
+}
+
+function ProduitCard({prod, sectionLabel, onAdd}){
+  const [open,setOpen]=useState(false);
+  const [fmt,setFmt]=useState(0);
+  const [qty,setQty]=useState(1);
+  const f=prod.formats[fmt];
+  return(
+    <div style={{marginBottom:4}}>
+      <button onClick={()=>{setOpen(o=>!o);setFmt(0);setQty(1);}} style={{width:"100%",background:"rgba(10,14,10,0.7)",border:`1px solid ${open?prod.sachetBorder:"rgba(255,255,255,0.07)"}`,borderRadius:10,padding:"10px 12px",display:"flex",alignItems:"center",gap:10,textAlign:"left",cursor:"pointer",backdropFilter:"blur(6px)"}}>
+        <div style={{
+          width:38, height:38, borderRadius:7, flexShrink:0,
+          background: prod.sachetBg,
+          border: `1px solid ${prod.sachetBorder}`,
+          boxShadow: `0 0 8px ${prod.sachetBorder}`,
+          display:"flex", alignItems:"center", justifyContent:"center"
+        }}>
+          <span style={{fontSize:16}}>
+            {prod.type.includes("Fleur")||prod.type.includes("Trim") ? "🌿" :
+             prod.type.includes("Résine") ? "🍫" :
+             prod.type.includes("pré-roulé")||prod.type.includes("Pré")||prod.type.includes("CBD classique")||prod.type.includes("CBN+ Platinum") ? "🚬" :
+             prod.type.includes("Recharge") ? "🔋" : "🔌"}
+          </span>
+        </div>
+        <div style={{flex:1}}>
+          <p style={{color:"#e0e0e0",fontSize:13,fontWeight:600,marginBottom:3}}>{prod.type}</p>
+          <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+            {prod.formats.map((f2,i)=>(
+              <span key={i} style={{color:"#aaaaaa",fontSize:11}}>
+                {f2.q} <span style={{color:GOLD,fontWeight:700}}>{f2.p}€</span>
+                {i<prod.formats.length-1&&<span style={{color:"#6a6a6a"}}> · </span>}
+              </span>
+            ))}
+          </div>
+        </div>
+        <span style={{color:open?GOLD:"#8a8a8a",fontSize:16,flexShrink:0}}>{open?"∧":"›"}</span>
+      </button>
+      {open&&(
+        <div style={{background:"rgba(8,12,8,0.95)",border:`1px solid ${prod.sachetBorder}`,borderTopWidth:0,borderRadius:"0 0 10px 10px",padding:"12px",marginBottom:2}}>
+          {prod.formats.map((f2,i)=>(
+            <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+              <span style={{color:"#d8d8d8",fontSize:14}}>{f2.q}</span>
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <span style={{color:"#4a9a50",fontSize:11}}>+{getPoints(f2.q)} pt{getPoints(f2.q)>1?"s":""}</span>
+                <span style={{color:GOLD,fontWeight:700,fontSize:15}}>{f2.p} €</span>
+              </div>
+            </div>
+          ))}
+          <div style={{marginTop:12}}>
+            <p style={{color:"#a0a0a0",fontSize:11,letterSpacing:1,marginBottom:6}}>FORMAT</p>
+            <select value={fmt} onChange={e=>setFmt(+e.target.value)} style={{...IS,marginBottom:10,background:"#0a0c0a",fontSize:13}}>
+              {prod.formats.map((f2,i)=><option key={i} value={i} style={{background:"#0a0c0a"}}>{f2.q} — {f2.p}€</option>)}
+            </select>
+            <p style={{color:"#a0a0a0",fontSize:11,letterSpacing:1,marginBottom:8}}>QUANTITÉ</p>
+            <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:12}}>
+              <button onClick={()=>setQty(q=>Math.max(1,q-1))} style={{width:40,height:40,background:"rgba(255,255,255,0.06)",border:`1px solid ${BORDER}`,borderRadius:8,color:"#e8e4dc",fontSize:20,cursor:"pointer"}}>−</button>
+              <span style={{fontSize:18,color:"#e8e4dc",fontWeight:700,minWidth:28,textAlign:"center"}}>{qty}</span>
+              <button onClick={()=>setQty(q=>q+1)} style={{width:40,height:40,background:"rgba(255,255,255,0.06)",border:`1px solid ${BORDER}`,borderRadius:8,color:"#e8e4dc",fontSize:20,cursor:"pointer"}}>+</button>
+              <span style={{color:"#4a9a50",fontSize:12,marginLeft:4}}>+{getPoints(f.q)*qty} pts</span>
+            </div>
+            <button onClick={()=>{onAdd({label:`${sectionLabel} — ${prod.type}`,format:f,qte:qty,pts:getPoints(f.q)*qty});setOpen(false);setQty(1);}} style={BTN_GREEN}>🛒 Ajouter — {f.p*qty} €</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CatalogueParticulier({user}){
+  const [openSec,setOpenSec]=useState(null);
+  const [cart,setCart]=useState([]);
+  const total=cart.reduce((s,i)=>s+i.format.p*i.qte,0);
+  const totalPts=cart.reduce((s,i)=>s+i.pts,0);
+
+  return(
+    <div style={{paddingBottom:80}}>
+      <Header title="Particuliers" right={
+        cart.length>0&&<div style={{background:"rgba(201,168,76,0.12)",border:`1px solid ${BORDER}`,borderRadius:20,padding:"5px 13px",display:"flex",gap:6,alignItems:"center"}}>
+          <span style={{fontSize:13}}>🛒</span>
+          <span style={{color:GOLD,fontSize:13,fontWeight:700}}>{cart.length} · {total}€</span>
+        </div>
+      }/>
+      <div style={{margin:"10px 14px 0",background:"rgba(201,168,76,0.06)",border:`1px solid ${BORDER}`,borderRadius:10,padding:"10px 14px",display:"flex",gap:10,alignItems:"center"}}>
+        <span style={{fontSize:16}}>✅</span>
+        <p style={{color:"#b8b8b8",fontSize:12}}>THC &lt; 0,3% — Produits légaux, conformes à la législation française</p>
+      </div>
+      <div style={{margin:"10px 14px 0",background:"linear-gradient(135deg,rgba(160,120,20,0.22),rgba(120,90,10,0.18))",border:`1px solid rgba(201,168,76,0.3)`,borderRadius:12,padding:"14px"}}>
+        <div style={{display:"flex",gap:12,alignItems:"center"}}>
+          <span style={{fontSize:26}}>📦</span>
+          <div>
+            <p style={{color:"#e8e4dc",fontWeight:600,fontSize:13,marginBottom:2}}>Scannez votre code pochon !</p>
+            <p style={{color:"#cccccc",fontSize:12}}>Gagnez des <span style={{color:GOLD,fontWeight:600}}>points fidélité</span> et débloquez des grammages offerts 🎁</p>
+          </div>
+        </div>
+      </div>
+      <ApporteurBanner store={STORE} forceUpdate={()=>{}}/>
+
+      <p style={{color:"#8a8a8a",fontSize:11,fontStyle:"italic",margin:"8px 14px",lineHeight:1.5}}>⚠️ Variétés selon arrivages · Qualité garantie constante</p>
+      <div style={{padding:"0 14px"}}>
+        {SECTIONS_PART.map(sec=>(
+          <div key={sec.id} style={{marginBottom:6}}>
+            <button onClick={()=>setOpenSec(openSec===sec.id?null:sec.id)} style={{width:"100%",background:sec.bg,border:`1px solid ${sec.borderColor}`,borderRadius:12,padding:"13px 15px",display:"flex",alignItems:"center",gap:10,textAlign:"left",cursor:"pointer",backdropFilter:"blur(8px)"}}>
+              <div style={{flex:1}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
+                  <p style={{color:"#e8e4dc",fontWeight:700,fontSize:14}}>{sec.label}</p>
+                  {sec.badge&&<span style={{background:`${sec.badgeColor}22`,border:`1px solid ${sec.badgeColor}55`,color:sec.badgeColor,fontSize:9,fontWeight:700,padding:"2px 7px",borderRadius:20,letterSpacing:.5}}>{sec.badge}</span>}
+                </div>
+                <p style={{color:"#aaaaaa",fontSize:11,lineHeight:1.4}}>{sec.note}</p>
+              </div>
+              <span style={{color:openSec===sec.id?GOLD:"#909090",fontSize:18,flexShrink:0}}>{openSec===sec.id?"∧":"›"}</span>
+            </button>
+
+            {openSec===sec.id&&(
+              <div style={{background:"rgba(4,8,4,0.95)",border:`1px solid ${sec.borderColor}`,borderTopWidth:0,borderRadius:"0 0 12px 12px",padding:"12px",backdropFilter:"blur(10px)"}}>
+                <p style={{color:"#a0a0a0",fontSize:12,lineHeight:1.5,marginBottom:10,paddingBottom:8,borderBottom:"1px solid rgba(255,255,255,0.04)"}}>{sec.desc}</p>
+                {sec.groupes ? sec.groupes.map((grp,gi)=>(
+                  <div key={gi}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,marginTop:gi>0?12:0}}>
+                      <div style={{height:1,flex:1,background:grp.labelBorder}}/>
+                      <div style={{background:grp.labelBg,border:`1px solid ${grp.labelBorder}`,borderRadius:20,padding:"3px 10px"}}>
+                        <span style={{color:grp.labelColor,fontSize:11,fontWeight:700,letterSpacing:.4}}>{grp.label}</span>
+                      </div>
+                      <div style={{height:1,flex:1,background:grp.labelBorder}}/>
+                    </div>
+                    {grp.produits.map(prod=>(
+                      <ProduitCard key={prod.id} prod={prod} sectionLabel={sec.label} onAdd={item=>setCart(c=>[...c,item])}/>
+                    ))}
+                  </div>
+                )) : sec.produits&&sec.produits.map(prod=>(
+                  <ProduitCard key={prod.id} prod={prod} sectionLabel={sec.label} onAdd={item=>setCart(c=>[...c,item])}/>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      {cart.length>0&&(
+        <div style={{margin:"10px 14px 0"}}>
+          <Card>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+              <p style={{color:GOLD,fontWeight:700,fontSize:15}}>🛒 Mon panier</p>
+              <button onClick={()=>setCart([])} style={{...BTN_RED,padding:"4px 10px",fontSize:11}}>Vider</button>
+            </div>
+            {cart.map((it,i)=>(
+              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+                <div style={{flex:1}}>
+                  <p style={{color:"#d8d8d8",fontSize:12,lineHeight:1.4}}>{it.label}</p>
+                  <p style={{color:"#a0a0a0",fontSize:11}}>{it.format.q} × {it.qte}</p>
+                </div>
+                <div style={{textAlign:"right",flexShrink:0}}>
+                  <p style={{color:GOLD,fontWeight:700,fontSize:13}}>{it.format.p*it.qte} €</p>
+                  <p style={{color:"#4a9a50",fontSize:10}}>+{it.pts} pts</p>
+                </div>
+                <button onClick={()=>setCart(c=>c.filter((_,j)=>j!==i))} style={{...BTN_RED,padding:"3px 8px",fontSize:12,marginLeft:8}}>×</button>
+              </div>
+            ))}
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:12,paddingTop:10,borderTop:`1px solid ${BORDER}`}}>
+              <div>
+                <p style={{color:"#e8e4dc",fontWeight:700,fontSize:15}}>Total</p>
+                <p style={{color:"#4a9a50",fontSize:12}}>+{totalPts} points fidélité</p>
+              </div>
+              <span style={{color:GOLD,fontWeight:700,fontSize:22}}>{total} €</span>
+            </div>
+            <CommandeForm cart={cart} total={total} user={user} onDone={()=>setCart([])} store={STORE} forceUpdate={()=>{ const e=new Event("origincbd_update"); window.dispatchEvent(e); }}/>
+          </Card>
+        </div>
+      )}
+      <div style={{padding:"0 14px"}}>
+        <AvisForm store={STORE} user={user}/>
+      </div>
+      <div style={{margin:"16px",textAlign:"center"}}><p style={{color:"#6a6a6a",fontSize:11}}>© ORIGIN CBD 2026</p></div>
+    </div>
+  );
+}
+function PartenaireForm({store,forceUpdate}){
+  const [show,setShow]=useState(false); const [ok,setOk]=useState(false);
+  const [f,setF]=useState({prenom:"",siret:"",tva:"",email:"",formule:""}); const [err,setErr]=useState("");
+  const FORMULES_CHOIX=["F1 — Distributeur Automatique (30% commission)","F2 — Revente Directe (marge libre)","F3 — Distributeur + Revente (40% + marge)","F4 — Dépôt / Vente (50/50)","F5 — Achat de distributeur","Je ne sais pas encore"];
+  function submit(){
+    if(!f.prenom.trim()||!f.siret.trim()||!f.email.trim()||!f.formule){setErr("Veuillez remplir tous les champs obligatoires.");return;}
+    if(!f.email.includes("@")){setErr("Email invalide.");return;}
+    store.demandesPro.push({...f,type:"partenariat",date:new Date().toLocaleDateString("fr-FR"),statut:"attente"});
+    forceUpdate(); setOk(true); setErr("");
+  }
+  if(!show) return(
+    <div style={{background:"rgba(201,168,76,0.07)",border:`1px solid ${BORDER}`,borderRadius:14,padding:"18px",margin:"14px 0"}}>
+      <p style={{color:"#e8e4dc",fontWeight:600,fontSize:15,marginBottom:8}}>🤝 Vous souhaitez devenir partenaire ?</p>
+      <p style={{color:"#c0c0c0",fontSize:13,lineHeight:1.6,marginBottom:14}}>Buraliste, épicerie, salon... Rejoignez le réseau Origin CBD. Remplissez votre demande et nous vous contactons sous 24h.</p>
+      <button onClick={()=>setShow(true)} style={{background:"rgba(255,255,255,0.08)",border:`1px solid ${BORDER}`,color:"#e8e4dc",borderRadius:10,padding:"11px 20px",fontSize:13,fontWeight:500,cursor:"pointer"}}>📋 Faire une demande de partenariat →</button>
+    </div>
+  );
+  return(
+    <Card style={{margin:"14px 0"}}>
+      {ok?(
+        <div style={{textAlign:"center",padding:"20px 0"}}>
+          <div style={{fontSize:46,marginBottom:12}}>✅</div>
+          <p style={{color:"#5aba60",fontWeight:600,fontSize:16,marginBottom:8}}>Demande envoyée !</p>
+          <p style={{color:"#c0c0c0",fontSize:13,lineHeight:1.7}}>Nous avons bien reçu votre demande.<br/>Nous vous contactons sous 24h.</p>
+          <button onClick={()=>{setShow(false);setOk(false);setF({prenom:"",siret:"",tva:"",email:"",formule:""});}} style={{...BTN_GOLD,marginTop:16}}>Fermer</button>
+        </div>
+      ):(
+        <>
+          <p style={{color:GOLD,fontWeight:600,fontSize:15,marginBottom:4}}>🤝 Demande de partenariat</p>
+          <p style={{color:"#aaaaaa",fontSize:13,marginBottom:16,lineHeight:1.6}}>Remplissez ce formulaire pour rejoindre le réseau Origin CBD.</p>
+          {[{label:"PRÉNOM / NOM *",key:"prenom",placeholder:"Votre prénom et nom"},{label:"NUMÉRO SIRET *",key:"siret",placeholder:"Ex : 12345678900012"},{label:"N° TVA INTRACOMMUNAUTAIRE",key:"tva",placeholder:"Ex : FR12345678900"},{label:"EMAIL PROFESSIONNEL *",key:"email",placeholder:"votre@email.com",type:"email"}].map(field=>(
+            <div key={field.key}>
+              <p style={{color:"#b8b8b8",fontSize:11,letterSpacing:1,marginBottom:5}}>{field.label}</p>
+              <input placeholder={field.placeholder} type={field.type||"text"} value={f[field.key]} onChange={e=>setF({...f,[field.key]:e.target.value})} style={{...IS,marginBottom:12}}/>
+            </div>
+          ))}
+          <p style={{color:"#b8b8b8",fontSize:11,letterSpacing:1,marginBottom:5}}>FORMULE SOUHAITÉE *</p>
+          <select value={f.formule} onChange={e=>setF({...f,formule:e.target.value})} style={{...IS,marginBottom:16,background:"rgba(20,22,20,0.9)"}}>
+            <option value="" style={{background:"#141414"}}>— Choisissez une formule —</option>
+            {FORMULES_CHOIX.map(fc=><option key={fc} value={fc} style={{background:"#141414"}}>{fc}</option>)}
+          </select>
+          {err&&<p style={{color:"#f87171",fontSize:13,marginBottom:12}}>{err}</p>}
+          <button onClick={submit} style={BTN_GOLD}>Envoyer la demande →</button>
+          <button onClick={()=>setShow(false)} style={{...BTN_GHOST,marginTop:8}}>Annuler</button>
+        </>
+      )}
+    </Card>
+  );
+}
+function CataloguePro({store,forceUpdate}){
+  const proUnlocked = (() => { try { return localStorage.getItem('origincbd_pro')==='1'; } catch(e){ return false; } })();
+  const [unlocked,setUnlocked]=useState(proUnlocked); const [code,setCode]=useState(""); const [err,setErr]=useState("");
+  const [openF,setOpenF]=useState(null); const [openP,setOpenP]=useState(null);
+  const [showAccesForm,setShowAccesForm]=useState(false);
+  const [accesForm,setAccesForm]=useState({prenom:"",siret:"",tva:"",email:""});
+  const [accesErr,setAccesErr]=useState(""); const [accesOk,setAccesOk]=useState(false);
+
+  function submitAcces(){
+    if(!accesForm.prenom.trim()||!accesForm.siret.trim()||!accesForm.email.trim()){setAccesErr("Veuillez remplir tous les champs obligatoires.");return;}
+    if(!accesForm.email.includes("@")){setAccesErr("Email invalide.");return;}
+    store.demandesPro.push({...accesForm,type:"acces",date:new Date().toLocaleDateString("fr-FR"),statut:"attente"});
+    forceUpdate(); setAccesOk(true); setAccesErr("");
+  }
+
+  const formules=[
+    {num:"F1",label:"Distributeur Automatique",sub:"Zéro gestion · Zéro risque",color:"#4a9ad4",highlight:"30% des bénéfices du distributeur",desc:"Nous installons un distributeur directement dans votre point de vente. Approvisionnement, gestion des stocks et maintenance pris en charge.",avantages:["Aucune gestion à effectuer","Zéro risque financier","Option passage formule 3"],cond:"💳 Versement des commissions toutes les 2 semaines"},
+    {num:"F2",label:"Revente Directe",sub:"Marge attractive · Aucune exclusivité",color:"#c9a84c",highlight:"Conditions revendeur avantageuses",desc:"Vous achetez les produits ORIGIN CBD et les revendez librement dans votre boutique.",avantages:["Aucune exclusivité imposée","Marge attractive","Reprise des invendus sous 3 mois"],cond:"💳 2 premiers règlements : 30j · Ensuite paiement à la signature"},
+    {num:"F3",label:"Distributeur + Revente",sub:"Double revenu · Marge optimisée",color:"#7a6ad4",highlight:"40% des bénéfices du distributeur",desc:"Distributeur sans investissement + vente en boutique. Idéal pour maximiser votre chiffre d'affaires.",avantages:["Distributeur fourni sans frais","Tarifs préférentiels","Double source de revenus"],cond:"💳 Paiement différé sous 30 jours"},
+    {num:"F4",label:"Dépôt / Vente",sub:"Aucune avance · Test facile",color:"#9a6ad4",highlight:"Répartition 50/50 des bénéfices",desc:"Stock en place sans paiement initial. Vous payez uniquement ce que vous vendez.",avantages:["Aucune avance de trésorerie","Reprise des invendus sous 3 mois","Prix d'achat avantageux"],cond:"💳 Paiement différé 30 jours · Produits non ouverts repris"},
+    {num:"F5",label:"Vente Distributeur",sub:"Achat du distributeur · Autonomie totale",color:"#d46040",highlight:"",desc:"Achetez votre propre distributeur. Modèle intérieur ou extérieur disponible.",avantages:["Propriété totale de la machine","Autonomie complète"],cond:"💳 Acompte 33% · Solde à réception"},
+  ];
+  const SECTIONS_PRO = [
+    {
+      id:"light_pro", label:"🌱 LIGHT ÉDITION", badge:"Offre promo", badgeColor:"#e8a020",
+      desc:"Fleurs CBD sélectionnées pour leur excellent rapport qualité/prix.",
+      note:"THC < 0,3% · CBD · Légal en France",
+      bg:"linear-gradient(135deg,#1a3a1a,#0e2010)", borderColor:"rgba(80,180,60,0.35)",
+      groupes:[
+        { label:"🌿 FLEURS CBD", labelColor:"#5aba60", labelBg:"rgba(40,120,40,0.2)", labelBorder:"rgba(60,160,50,0.35)",
+          produits:[{ id:"lp_f", type:"Fleurs CBD",
+            sachetBg:"linear-gradient(135deg,#d040a0,#a020c0,#60c040)", sachetBorder:"rgba(200,80,180,0.7)",
+            achat:[{q:"1,5g",a:"2 €",p:"4 €",m:"+2 €"},{q:"3,5g",a:"5 €",p:"10 €",m:"+5 €"},{q:"7g",a:"9 €",p:"20 €",m:"+11 €"},{q:"10g",a:"12 €",p:"25 €",m:"+13 €"}]
+          }]
+        }
+      ]
+    },
+    {
+      id:"bronze_pro", label:"🥉 BRONZE ÉDITION", badge:"Rapport qualité/prix", badgeColor:"#c8804a",
+      desc:"Produits sélectionnés avec passion, adaptés aux bureaux de tabac.",
+      note:"THC < 0,3% · CBD · Légal en France",
+      bg:"linear-gradient(135deg,#2a1a08,#1a1005)", borderColor:"rgba(180,110,50,0.35)",
+      groupes:[
+        { label:"🌿 FLEURS CBD", labelColor:"#5aba60", labelBg:"rgba(40,120,40,0.2)", labelBorder:"rgba(60,160,50,0.35)",
+          produits:[{ id:"bp_f", type:"Fleurs CBD",
+            sachetBg:"linear-gradient(135deg,#c07030,#8a4010,#c07030)", sachetBorder:"rgba(180,110,50,0.7)",
+            achat:[{q:"1g",a:"2 €",p:"4 €",m:"+2 €"},{q:"3g",a:"5 €",p:"10 €",m:"+5 €"},{q:"5g",a:"9 €",p:"20 €",m:"+11 €"},{q:"10g",a:"18 €",p:"35 €",m:"+17 €"}]
+          }]
+        },
+        { label:"🍫 RÉSINE CBD", labelColor:"#c8804a", labelBg:"rgba(100,55,20,0.2)", labelBorder:"rgba(150,90,35,0.35)",
+          produits:[{ id:"bp_r", type:"Résine CBD",
+            sachetBg:"linear-gradient(135deg,#6a3a10,#4a2008,#6a3a10)", sachetBorder:"rgba(130,80,30,0.7)",
+            achat:[{q:"1g",a:"2 €",p:"4 €",m:"+2 €"},{q:"3g",a:"5 €",p:"10 €",m:"+5 €"},{q:"5g",a:"9 €",p:"20 €",m:"+11 €"},{q:"10g",a:"18 €",p:"35 €",m:"+17 €"}]
+          }]
+        }
+      ]
+    },
+    {
+      id:"silver_pro", label:"🥈 SILVER ÉDITION", badge:"Forte rotation", badgeColor:"#9098a8",
+      desc:"Référence à forte rotation en point de vente.",
+      note:"THC < 0,3% · CBD · Légal en France",
+      bg:"linear-gradient(135deg,#141820,#0c1018)", borderColor:"rgba(140,155,185,0.35)",
+      groupes:[
+        { label:"🌿 FLEURS CBD", labelColor:"#5aba60", labelBg:"rgba(40,120,40,0.2)", labelBorder:"rgba(60,160,50,0.35)",
+          produits:[{ id:"sp_f", type:"Fleurs CBD",
+            sachetBg:"linear-gradient(135deg,#b0b8c8,#788090,#c0c8d8)", sachetBorder:"rgba(180,190,210,0.7)",
+            achat:[{q:"1g",a:"3 €",p:"6 €",m:"+3 €"},{q:"3g",a:"8 €",p:"20 €",m:"+12 €"},{q:"5g",a:"13 €",p:"30 €",m:"+17 €"},{q:"10g",a:"20 €",p:"40 €",m:"+20 €"}]
+          }]
+        },
+        { label:"🍫 RÉSINE CBD", labelColor:"#9098a8", labelBg:"rgba(100,110,130,0.2)", labelBorder:"rgba(140,155,185,0.35)",
+          produits:[{ id:"sp_r", type:"Résine CBD",
+            sachetBg:"linear-gradient(135deg,#909aaa,#606878,#909aaa)", sachetBorder:"rgba(150,160,185,0.7)",
+            achat:[{q:"1g",a:"3 €",p:"6 €",m:"+3 €"},{q:"3g",a:"8 €",p:"20 €",m:"+12 €"},{q:"5g",a:"13 €",p:"30 €",m:"+17 €"},{q:"10g",a:"20 €",p:"40 €",m:"+20 €"}]
+          }]
+        }
+      ]
+    },
+    {
+      id:"gold_pro", label:"🥇 GOLD ÉDITION", badge:"CBN+ 2x filtré", badgeColor:"#c9a84c",
+      desc:"Fleurs et résines CBN+ Gold 2x filtré — haut de gamme, forte demande.",
+      note:"THC < 0,3% · CBN+ 2x filtré · Sachet doré",
+      bg:"linear-gradient(135deg,#1e160a,#140e04)", borderColor:"rgba(201,168,76,0.4)",
+      groupes:[
+        { label:"🌿 FLEURS CBN+", labelColor:"#c9a84c", labelBg:"rgba(180,140,30,0.2)", labelBorder:"rgba(201,168,76,0.4)",
+          produits:[{ id:"gp_f", type:"Fleurs CBN+ Gold",
+            sachetBg:"linear-gradient(135deg,#e8c060,#c09010,#e8c060)", sachetBorder:"rgba(220,185,80,0.75)",
+            achat:[{q:"1g",a:"4 €",p:"8 €",m:"+4 €"},{q:"3g",a:"10 €",p:"20 €",m:"+10 €"},{q:"10g",a:"25 €",p:"50 €",m:"+25 €"}]
+          }]
+        },
+        { label:"🍫 RÉSINE CBN+", labelColor:"#c9a84c", labelBg:"rgba(160,120,20,0.2)", labelBorder:"rgba(190,155,50,0.4)",
+          produits:[{ id:"gp_r", type:"Résine CBN+ Gold",
+            sachetBg:"linear-gradient(135deg,#d4a020,#a07010,#d4a020)", sachetBorder:"rgba(200,165,50,0.75)",
+            achat:[{q:"1g",a:"4 €",p:"8 €",m:"+4 €"},{q:"3g",a:"10 €",p:"20 €",m:"+10 €"},{q:"10g",a:"25 €",p:"50 €",m:"+25 €"}]
+          }]
+        }
+      ]
+    },
+    {
+      id:"platinum_pro", label:"💎 PLATINUM ÉDITION", badge:"CBN+ 3x filtré", badgeColor:"#c084fc",
+      desc:"Fleurs et résines CBN+ Platinum 3x filtré — qualité supérieure, packaging holographique.",
+      note:"THC < 0,3% · CBN+ 3x filtré · Sachet holographique",
+      bg:"linear-gradient(135deg,#180828,#0e0418)", borderColor:"rgba(160,80,220,0.4)",
+      groupes:[
+        { label:"🌿 FLEURS CBN+", labelColor:"#c084fc", labelBg:"rgba(120,50,180,0.2)", labelBorder:"rgba(160,80,220,0.35)",
+          produits:[{ id:"pp_f", type:"Fleurs CBN+ Platinum",
+            sachetBg:"linear-gradient(135deg,#a040e0,#6020b0,#c060f0)", sachetBorder:"rgba(180,100,255,0.75)",
+            achat:[{q:"1g",a:"4 €",p:"8 €",m:"+4 €"},{q:"2,5g",a:"10 €",p:"20 €",m:"+10 €"},{q:"7g",a:"25 €",p:"50 €",m:"+25 €"}]
+          }]
+        },
+        { label:"🍫 RÉSINE CBN+", labelColor:"#c084fc", labelBg:"rgba(100,40,160,0.2)", labelBorder:"rgba(140,60,200,0.35)",
+          produits:[{ id:"pp_r", type:"Résine CBN+ Platinum",
+            sachetBg:"linear-gradient(135deg,#a040e0,#4080ff,#e040a0,#40d080)", sachetBorder:"rgba(160,100,255,0.75)",
+            achat:[{q:"1g",a:"4 €",p:"8 €",m:"+4 €"},{q:"2,5g",a:"10 €",p:"20 €",m:"+10 €"},{q:"7g",a:"25 €",p:"50 €",m:"+25 €"}]
+          }]
+        }
+      ]
+    },
+    {
+      id:"trim_pro", label:"🌿 TRIM PREMIUM", badge:"Produit d'appel", badgeColor:"#4a8a40",
+      desc:"Produit économique avec forte rotation. Prix très compétitif.",
+      note:"Très forte demande en boutique CBD",
+      bg:"linear-gradient(135deg,#0e1e0a,#081408)", borderColor:"rgba(70,160,50,0.3)",
+      groupes:[
+        { label:"🌿 TRIM", labelColor:"#5aba60", labelBg:"rgba(40,110,30,0.2)", labelBorder:"rgba(70,160,50,0.35)",
+          produits:[
+            { id:"tp_cbd", type:"Trim CBD",
+              sachetBg:"linear-gradient(135deg,#2a7020,#184010,#2a7020)", sachetBorder:"rgba(60,150,40,0.7)",
+              achat:[{q:"10g",a:"4 €",p:"10 €",m:"+6 €"}]
+            },
+            { id:"tp_cbn", type:"Trim CBN+",
+              sachetBg:"linear-gradient(135deg,#408030,#285018,#408030)", sachetBorder:"rgba(80,170,60,0.7)",
+              achat:[{q:"10g",a:"15 €",p:"30 €",m:"+15 €"}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id:"preroll_pro", label:"🚬 PRÉ-ROULÉS", badge:"Prêts à l'emploi", badgeColor:"#b09040",
+      desc:"Boîte de 50 pré-roulés prêts à l'emploi, sans nicotine.",
+      note:"CBD classique ou CBN+",
+      bg:"linear-gradient(135deg,#1a1508,#100e04)", borderColor:"rgba(160,130,50,0.3)",
+      groupes:[
+        { label:"🚬 PRÉ-ROULÉS", labelColor:"#b09040", labelBg:"rgba(140,110,30,0.2)", labelBorder:"rgba(170,140,50,0.35)",
+          produits:[
+            { id:"pr_cbd", type:"CBD classique",
+              sachetBg:"linear-gradient(135deg,#d8d0b0,#b0a880,#d8d0b0)", sachetBorder:"rgba(200,185,140,0.7)",
+              achat:[{q:"1 pré-roulé",a:"1,50 €",p:"3 €",m:"+1,50 €"}]
+            },
+            { id:"pr_cbn", type:"CBN+ Platinum",
+              sachetBg:"linear-gradient(135deg,#1a0828,#300850,#1a0828)", sachetBorder:"rgba(160,80,220,0.7)",
+              achat:[{q:"1 pré-roulé",a:"3 €",p:"6 €",m:"+3 €"}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id:"ecig_pro", label:"🔌 E-CIGARETTE CBN+", badge:"CBN+", badgeColor:"#c084fc",
+      desc:"Cigarette électronique CBN+ Origin CBD — sans nicotine, sans additifs. Recharges disponibles.",
+      note:"CBN+ · Sans nicotine · Sans additifs",
+      bg:"linear-gradient(135deg,#180828,#0e0418)", borderColor:"rgba(160,80,220,0.35)",
+      groupes:[
+        { label:"🔌 E-CIGARETTE CBN+", labelColor:"#c084fc", labelBg:"rgba(120,50,180,0.2)", labelBorder:"rgba(160,80,220,0.35)",
+          produits:[
+            { id:"ec_u", type:"E-Cigarette CBN+",
+              sachetBg:"linear-gradient(135deg,#2a0840,#180428,#a040e0,#2a0840)", sachetBorder:"rgba(160,80,220,0.7)",
+              achat:[{q:"1 unité",a:"15 €",p:"25 €",m:"+10 €"}]
+            },
+            { id:"ec_r", type:"Recharge CBN+",
+              sachetBg:"linear-gradient(135deg,#1a0630,#0e0220,#8030c0,#1a0630)", sachetBorder:"rgba(130,60,190,0.65)",
+              achat:[{q:"1 recharge",a:"10 €",p:"20 €",m:"+10 €"}]
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  if(!unlocked) return(
+    <div style={{paddingBottom:80}}>
+      <Header title="Professionnel"/>
+      <div style={{margin:"16px 14px 0",background:"linear-gradient(135deg,rgba(201,168,76,0.25),rgba(160,120,20,0.22))",border:`2px solid ${GOLD}`,borderRadius:16,padding:"18px 16px"}}>
+        <p style={{color:GOLD,fontWeight:700,fontSize:15,letterSpacing:1,marginBottom:8}}>🎁 OFFRE PROFESSIONNELLE</p>
+        <p style={{color:"#e8e4dc",fontSize:14,marginBottom:6}}>À partir de <span style={{color:GOLD,fontWeight:700}}>1 000 sachets</span> achetés :</p>
+        <p style={{color:"#4ade80",fontWeight:700,fontSize:16}}>→ 100 sachets LIGHT 1,5g OFFERTS</p>
+        <p style={{color:"#a0a0a0",fontSize:11,marginTop:4}}>*Valable sur les sachets à 50€</p>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"32px 24px"}}>
+        <div style={{fontSize:50,marginBottom:18}}>💼</div>
+        <h2 style={{fontFamily:"Georgia,serif",color:GOLD,fontSize:28,marginBottom:8,textAlign:"center"}}>Espace Professionnel</h2>
+        <p style={{color:"#a0a0a0",fontSize:14,textAlign:"center",marginBottom:28}}>Accès réservé aux partenaires</p>
+        <div style={{width:"100%",maxWidth:320}}>
+          <input placeholder="Code d'accès" type="password" value={code} onChange={e=>{setCode(e.target.value);setErr("");}} onKeyDown={e=>e.key==="Enter"&&(code==="5555"?(()=>{ try{localStorage.setItem('origincbd_pro','1');}catch(e){} setUnlocked(true); })():setErr("Code incorrect"))} style={{...IS,textAlign:"center",letterSpacing:10,fontSize:24,marginBottom:err?8:14}}/>
+          {err&&<p style={{color:"#f87171",fontSize:13,marginBottom:10,textAlign:"center"}}>{err}</p>}
+          <button onClick={()=>{ if(code==="5555"){ try{localStorage.setItem('origincbd_pro','1');}catch(e){} setUnlocked(true); } else { setErr("Code incorrect"); } }} style={BTN_GOLD}>Accéder</button>
+          <div style={{textAlign:"center",margin:"14px 0",color:"#8a8a8a",fontSize:13}}>— ou —</div>
+          <button onClick={()=>setShowAccesForm(true)} style={BTN_GHOST}>Demander un accès professionnel</button>
+        </div>
+      </div>
+      {showAccesForm&&(
+        <div style={{margin:"0 14px 20px"}}>
+          <Card>
+            {accesOk?(
+              <div style={{textAlign:"center",padding:"20px 0"}}>
+                <div style={{fontSize:46,marginBottom:12}}>✅</div>
+                <p style={{color:"#5aba60",fontWeight:600,fontSize:16,marginBottom:8}}>Demande envoyée !</p>
+                <p style={{color:"#c0c0c0",fontSize:13,lineHeight:1.7}}>Nous avons bien reçu votre demande.<br/>Vous recevrez votre code d'accès sous 24h.</p>
+                <button onClick={()=>{setShowAccesForm(false);setAccesOk(false);setAccesForm({prenom:"",siret:"",tva:"",email:""}); }} style={{...BTN_GOLD,marginTop:16}}>Fermer</button>
+              </div>
+            ):(
+              <>
+                <p style={{color:GOLD,fontWeight:600,fontSize:15,marginBottom:16}}>📋 Demande d'accès professionnel</p>
+                {[{label:"PRÉNOM / NOM *",key:"prenom",placeholder:"Votre prénom et nom"},{label:"NUMÉRO SIRET *",key:"siret",placeholder:"Ex : 12345678900012"},{label:"N° TVA INTRACOMMUNAUTAIRE",key:"tva",placeholder:"Ex : FR12345678900"},{label:"EMAIL PROFESSIONNEL *",key:"email",placeholder:"votre@email.com",type:"email"}].map(fi=>(
+                  <div key={fi.key}>
+                    <p style={{color:"#b8b8b8",fontSize:11,letterSpacing:1,marginBottom:5}}>{fi.label}</p>
+                    <input placeholder={fi.placeholder} type={fi.type||"text"} value={accesForm[fi.key]} onChange={e=>setAccesForm({...accesForm,[fi.key]:e.target.value})} style={{...IS,marginBottom:12}}/>
+                  </div>
+                ))}
+                {accesErr&&<p style={{color:"#f87171",fontSize:13,marginBottom:12}}>{accesErr}</p>}
+                <button onClick={submitAcces} style={BTN_GOLD}>Envoyer la demande →</button>
+                <button onClick={()=>setShowAccesForm(false)} style={{...BTN_GHOST,marginTop:8}}>Annuler</button>
+              </>
+            )}
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+
+  return(
+    <div style={{paddingBottom:80}}>
+      <Header title="Catalogue Pro"/>
+      <div style={{padding:"14px 14px 0"}}>
+        <div style={{background:"linear-gradient(135deg,rgba(201,168,76,0.26),rgba(160,120,20,0.23))",border:`2px solid ${GOLD}`,borderRadius:16,padding:"16px",marginBottom:16}}>
+          <p style={{color:GOLD,fontWeight:700,fontSize:14,letterSpacing:1,marginBottom:6}}>🎁 OFFRE PROFESSIONNELLE</p>
+          <p style={{color:"#e8e4dc",fontSize:14,marginBottom:4}}>À partir de <span style={{color:GOLD,fontWeight:700}}>1 000 sachets</span> achetés :</p>
+          <p style={{color:"#4ade80",fontWeight:700,fontSize:15}}>→ 100 sachets LIGHT 1,5g OFFERTS</p>
+          <p style={{color:"#a0a0a0",fontSize:11,marginTop:3}}>*Valable sur les sachets à 50€</p>
+        </div>
+        <p style={{color:GOLD,fontSize:11,fontWeight:600,letterSpacing:2,marginBottom:12}}>NOS FORMULES PARTENAIRES</p>
+        {formules.map(f=>(
+          <div key={f.num} style={{marginBottom:5}}>
+            <button onClick={()=>setOpenF(openF===f.num?null:f.num)} style={{width:"100%",background:CARD,border:`1px solid ${openF===f.num?f.color:BORDER}`,borderRadius:14,padding:"13px 16px",display:"flex",alignItems:"center",gap:12,textAlign:"left",backdropFilter:"blur(8px)",cursor:"pointer"}}>
+              <div style={{width:42,height:42,borderRadius:10,background:f.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{color:"#fff",fontWeight:700,fontSize:13}}>{f.num}</span></div>
+              <div style={{flex:1}}>
+                <p style={{color:"#e8e4dc",fontWeight:600,fontSize:14}}>{f.label}</p>
+                <p style={{color:"#aaaaaa",fontSize:12,marginTop:1}}>{f.sub}</p>
+              </div>
+              <span style={{color:"#a0a0a0",fontSize:18}}>{openF===f.num?"∧":"›"}</span>
+            </button>
+            {openF===f.num&&(
+              <div style={{background:"rgba(8,10,8,0.92)",border:`1px solid ${BORDER}`,borderRadius:14,padding:"15px",marginBottom:3}}>
+                {f.highlight&&<div style={{background:"rgba(74,180,80,0.1)",border:"1px solid rgba(74,180,80,0.22)",borderRadius:8,padding:"9px 13px",marginBottom:12,textAlign:"center"}}><p style={{color:"#5aba60",fontWeight:700,fontSize:14}}>{f.highlight}</p></div>}
+                <p style={{color:"#c8c8c8",fontSize:13,lineHeight:1.7,marginBottom:10}}>{f.desc}</p>
+                {f.avantages.map((a,i)=><p key={i} style={{color:"#5aba60",fontSize:12,margin:"3px 0"}}>✓ {a}</p>)}
+                <div style={{background:"rgba(255,255,255,0.04)",borderRadius:7,padding:"9px 11px",marginTop:10}}><p style={{color:"#b8b8b8",fontSize:12}}>{f.cond}</p></div>
+              </div>
+            )}
+          </div>
+        ))}
+        <p style={{color:GOLD,fontSize:11,fontWeight:600,letterSpacing:2,margin:"18px 0 8px"}}>📦 CATALOGUE PRODUITS PRO — PRIX HT</p>
+        <div style={{background:"rgba(201,168,76,0.06)",border:`1px solid ${BORDER}`,borderRadius:10,padding:"8px 12px",marginBottom:12,display:"flex",gap:12,flexWrap:"wrap"}}>
+          <span style={{color:"#c0c0c0",fontSize:11}}>Prix d'achat</span>
+          <span style={{color:"#444",fontSize:11}}>·</span>
+          <span style={{color:GOLD,fontSize:11,fontWeight:600}}>Prix conseillé</span>
+          <span style={{color:"#444",fontSize:11}}>·</span>
+          <span style={{color:"#5aba60",fontSize:11,fontWeight:600}}>Marge</span>
+        </div>
+        {SECTIONS_PRO.map(sec=>(
+          <div key={sec.id} style={{marginBottom:6}}>
+            <button onClick={()=>setOpenP(openP===sec.id?null:sec.id)} style={{width:"100%",background:sec.bg,border:`1px solid ${openP===sec.id?sec.borderColor:sec.borderColor.replace("0.35","0.15").replace("0.4","0.18").replace("0.3","0.12")}`,borderRadius:openP===sec.id?"12px 12px 0 0":12,padding:"12px 14px",display:"flex",alignItems:"center",gap:10,textAlign:"left",cursor:"pointer",backdropFilter:"blur(8px)"}}>
+              <div style={{flex:1}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2,flexWrap:"wrap"}}>
+                  <p style={{color:"#e8e4dc",fontWeight:700,fontSize:14}}>{sec.label}</p>
+                  {sec.badge&&<span style={{background:`${sec.badgeColor}20`,border:`1px solid ${sec.badgeColor}50`,color:sec.badgeColor,fontSize:9,fontWeight:700,padding:"2px 7px",borderRadius:20,letterSpacing:.4}}>{sec.badge}</span>}
+                </div>
+                <p style={{color:"#a0a0a0",fontSize:11}}>{sec.note}</p>
+              </div>
+              <span style={{color:openP===sec.id?GOLD:"#555",fontSize:17,flexShrink:0}}>{openP===sec.id?"∧":"›"}</span>
+            </button>
+            {openP===sec.id&&(
+              <div style={{background:"rgba(4,8,4,0.96)",border:`1px solid ${sec.borderColor}`,borderTopWidth:0,borderRadius:"0 0 12px 12px",padding:"12px",backdropFilter:"blur(10px)"}}>
+                <p style={{color:"#666",fontSize:12,lineHeight:1.5,marginBottom:10,paddingBottom:8,borderBottom:"1px solid rgba(255,255,255,0.04)"}}>{sec.desc}</p>
+                {sec.groupes.map((grp,gi)=>(
+                  <div key={gi}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,marginTop:gi>0?12:0}}>
+                      <div style={{height:1,flex:1,background:grp.labelBorder}}/>
+                      <div style={{background:grp.labelBg,border:`1px solid ${grp.labelBorder}`,borderRadius:20,padding:"3px 10px"}}>
+                        <span style={{color:grp.labelColor,fontSize:11,fontWeight:700,letterSpacing:.4}}>{grp.label}</span>
+                      </div>
+                      <div style={{height:1,flex:1,background:grp.labelBorder}}/>
+                    </div>
+                    {grp.produits.map(prod=>{
+                      const emoji = prod.type.includes("Fleur")||prod.type.includes("Trim")?"🌿":prod.type.includes("Résine")?"🍫":prod.type.includes("classique")||prod.type.includes("Platinum")?"🚬":prod.type.includes("Recharge")?"🔋":"🔌";
+                      const isOpen = openP===sec.id+"_"+prod.id;
+                      return(
+                        <div key={prod.id} style={{marginBottom:5}}>
+                          <button onClick={()=>setOpenP(isOpen?sec.id:sec.id+"_"+prod.id)} style={{width:"100%",background:"rgba(8,12,8,0.8)",border:`1px solid ${isOpen?prod.sachetBorder:"rgba(255,255,255,0.06)"}`,borderRadius:10,padding:"10px 12px",display:"flex",alignItems:"center",gap:10,textAlign:"left",cursor:"pointer",backdropFilter:"blur(6px)"}}>
+                            <div style={{width:40,height:40,borderRadius:8,flexShrink:0,background:prod.sachetBg,border:`1px solid ${prod.sachetBorder}`,boxShadow:`0 0 10px ${prod.sachetBorder}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                              <span style={{fontSize:17}}>{emoji}</span>
+                            </div>
+                            <div style={{flex:1}}>
+                              <p style={{color:"#e0e0e0",fontSize:13,fontWeight:700,marginBottom:3}}>{prod.type}</p>
+                              <div style={{display:"flex",flexDirection:"column",gap:1,marginTop:1}}>
+                                {prod.achat.map((a,i)=>(
+                                  <div key={i} style={{display:"flex",alignItems:"center",gap:4}}>
+                                    <span style={{color:"#909090",fontSize:11,fontWeight:700,minWidth:28}}>{a.q}</span>
+                                    <span style={{color:"#b0b0b0",fontSize:11}}>{a.a}</span>
+                                    <span style={{color:"#484848",fontSize:10,fontStyle:"italic"}}>→ prix conseillé</span>
+                                    <span style={{color:GOLD,fontWeight:700,fontSize:12}}>{a.p}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <span style={{color:isOpen?GOLD:"#444",fontSize:15,flexShrink:0}}>{isOpen?"∧":"›"}</span>
+                          </button>
+                          {isOpen&&(
+                            <div style={{background:"rgba(4,8,4,0.98)",border:`1px solid ${prod.sachetBorder}`,borderTopWidth:0,borderRadius:"0 0 10px 10px",padding:"0"}}>
+                              <div style={{display:"grid",gridTemplateColumns:"1.2fr 1fr 1.1fr 1fr",gap:0,padding:"8px 14px 6px",borderBottom:`1px solid ${prod.sachetBorder}40`}}>
+                                {[["Format","#909090"],["Prix d'achat","#b0b0b0"],["Prix conseillé",GOLD],["Marge","#5aba60"]].map(([h,col])=>(
+                                  <p key={h} style={{color:col,fontSize:10,fontWeight:700,letterSpacing:.5}}>{h}</p>
+                                ))}
+                              </div>
+                              {prod.achat.map((it,j)=>(
+                                <div key={j} style={{
+                                  display:"grid",gridTemplateColumns:"1.2fr 1fr 1.1fr 1fr",gap:0,
+                                  padding:"11px 14px",
+                                  borderBottom: j<prod.achat.length-1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                                  background: j%2===0 ? "transparent" : "rgba(255,255,255,0.015)",
+                                }}>
+                                  <p style={{color:"#e0e0e0",fontSize:14,fontWeight:700}}>{it.q}</p>
+                                  <p style={{color:"#c0c0c0",fontSize:14}}>{it.a}</p>
+                                  <div style={{display:"flex",alignItems:"center",gap:4}}>
+                                    <span style={{color:GOLD,fontWeight:800,fontSize:15}}>{it.p}</span>
+                                  </div>
+                                  <div style={{
+                                    background:"rgba(74,180,80,0.12)",border:"1px solid rgba(74,180,80,0.25)",
+                                    borderRadius:6,padding:"1px 6px",display:"inline-flex",alignItems:"center",
+                                    justifyContent:"center",alignSelf:"center",
+                                  }}>
+                                    <span style={{color:"#5aba60",fontWeight:700,fontSize:13}}>{it.m}</span>
+                                  </div>
+                                </div>
+                              ))}
+                              <div style={{padding:"8px 14px",borderTop:`1px solid ${prod.sachetBorder}30`,background:"rgba(201,168,76,0.04)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                                <span style={{color:"#707070",fontSize:10,letterSpacing:.5}}>MARGE MAXIMALE SUR 10g / unité</span>
+                                <span style={{color:GOLD,fontWeight:700,fontSize:12}}>
+                                  {prod.achat[prod.achat.length-1]?.m}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        <p style={{color:"#909090",fontSize:11,fontStyle:"italic",marginTop:8,lineHeight:1.6}}>⚠️ Les variétés peuvent changer selon arrivages.</p>
+        <div style={{background:"linear-gradient(135deg,rgba(30,80,35,0.45),rgba(20,60,25,0.45))",border:"1px solid rgba(74,180,80,0.2)",borderRadius:14,padding:"16px",margin:"14px 0"}}>
+          <p style={{color:"#e8f5e9",fontWeight:600,fontSize:14,marginBottom:8}}>💸 Devenir apporteur d'affaires</p>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+            <div style={{background:"rgba(255,255,255,0.07)",borderRadius:10,padding:"12px",textAlign:"center"}}><p style={{color:"#6ed878",fontSize:24,fontWeight:700}}>50€</p><p style={{color:"#5aba60",fontSize:10,letterSpacing:1,marginTop:1}}>PRIME À LA SIGNATURE</p></div>
+            <div style={{background:"rgba(255,255,255,0.07)",borderRadius:10,padding:"12px",textAlign:"center"}}><p style={{color:"#6ed878",fontSize:24,fontWeight:700}}>2%</p><p style={{color:"#5aba60",fontSize:10,letterSpacing:1,marginTop:1}}>SUR 3 MOIS</p></div>
+          </div>
+          <button onClick={()=>alert("Pour devenir apporteur :\norigincbd1900@gmail.com")} style={{...BTN_GREEN,fontSize:13}}>✉️ Je veux devenir apporteur →</button>
+        </div>
+        <PartenaireForm store={store} forceUpdate={forceUpdate}/>
+        <AvisForm store={store} user={null}/>
+      </div>
+    </div>
+  );
+}
+function Fidelite({user}){
+  const pts = user?.points || 0;
+  const niv = NIVEAUX.find(n=>pts>=n.min&&pts<=n.max) || NIVEAUX[0];
+  const next = NIVEAUX.find(n=>n.min>pts);
+  const progPct = next ? Math.min(100,((pts-niv.min)/(next.min-niv.min))*100) : 100;
+  const nextPalier = PALIERS.find(p=>pts<p.pts);
+  const lastPalier = [...PALIERS].reverse().find(p=>pts>=p.pts);
+  const ptsToNext = nextPalier ? nextPalier.pts - pts : 0;
+  const nivGrad = {
+    "Bronze":  "linear-gradient(135deg,#2a1600,#1a0e00,#3a2008,#1a0e00)",
+    "Argent":  "linear-gradient(135deg,#141820,#0c1018,#1e2530,#0c1018)",
+    "Or":      "linear-gradient(135deg,#1e1400,#120d00,#2a1e08,#120d00)",
+    "Clown":   "linear-gradient(135deg,#180828,#0e0418,#240c3a,#0e0418)",
+  };
+  const shineGrad = {
+    "Bronze": "linear-gradient(120deg,transparent 30%,rgba(200,120,40,0.15) 50%,transparent 70%)",
+    "Argent": "linear-gradient(120deg,transparent 30%,rgba(180,200,230,0.18) 50%,transparent 70%)",
+    "Or":     "linear-gradient(120deg,transparent 30%,rgba(220,180,60,0.2) 50%,transparent 70%)",
+    "Clown":  "linear-gradient(120deg,transparent 30%,rgba(180,80,255,0.2) 50%,transparent 70%)",
+  };
+
+  const BAREME = [
+    {icon:"🌿",label:"1g acheté",pts:"1 pt"},
+    {icon:"🌿",label:"2g / 2,5g",pts:"2 pts"},
+    {icon:"🌿",label:"3g / 3,5g",pts:"3 pts"},
+    {icon:"🌿",label:"5g",pts:"5 pts"},
+    {icon:"🌿",label:"7g",pts:"7 pts"},
+    {icon:"🌿",label:"10g",pts:"10 pts"},
+    {icon:"🚬",label:"1 pré-roulé",pts:"1 pt"},
+    {icon:"🔌",label:"1 e-cigarette CBN+",pts:"10 pts"},
+  ];
+
+  return(
+    <div style={{paddingBottom:90,overflowX:"hidden"}}>
+      <Header title="Fidélité"/>
+      <div style={{padding:"16px 14px 0"}}>
+        <div style={{
+          position:"relative", borderRadius:22, overflow:"hidden",
+          background: nivGrad[niv.nom],
+          border:`1.5px solid ${niv.c}60`,
+          boxShadow:`0 0 32px ${niv.c}30, 0 8px 32px rgba(0,0,0,0.6)`,
+          padding:"22px 20px 20px",
+          marginBottom:16,
+        }}>
+          <div style={{position:"absolute",inset:0,background:shineGrad[niv.nom],pointerEvents:"none"}}/>
+          <div style={{position:"absolute",top:-40,right:-40,width:140,height:140,borderRadius:"50%",background:`${niv.c}08`,border:`1px solid ${niv.c}15`,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",bottom:-30,left:-30,width:100,height:100,borderRadius:"50%",background:`${niv.c}06`,border:`1px solid ${niv.c}10`,pointerEvents:"none"}}/>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18,position:"relative"}}>
+            <div>
+              <p style={{color:niv.c,fontSize:9,fontWeight:700,letterSpacing:3,marginBottom:4}}>ORIGIN CBD · PROGRAMME FIDÉLITÉ</p>
+              <p style={{color:"#e8e4dc",fontSize:17,fontWeight:700,fontFamily:"Georgia,serif"}}>{user?.prenom||"Visiteur"}</p>
+            </div>
+            <div style={{
+              background:`${niv.c}20`,
+              border:`1.5px solid ${niv.c}`,
+              borderRadius:12,
+              padding:"6px 12px",
+              display:"flex",flexDirection:"column",alignItems:"center",gap:2,
+              boxShadow:`0 0 12px ${niv.c}40`,
+            }}>
+              <span style={{fontSize:20}}>{niv.icon}</span>
+              <span style={{color:niv.c,fontSize:10,fontWeight:700,letterSpacing:1}}>{niv.nom.toUpperCase()}</span>
+            </div>
+          </div>
+          <div style={{display:"flex",alignItems:"flex-end",gap:8,marginBottom:16}}>
+            <span style={{
+              color:niv.c, fontSize:64, fontWeight:800, lineHeight:1,
+              textShadow:`0 0 20px ${niv.c}80`,
+              fontFamily:"Georgia,serif",
+            }}>{pts}</span>
+            <div style={{paddingBottom:8}}>
+              <p style={{color:niv.c,fontSize:11,fontWeight:600,opacity:0.8}}>POINTS</p>
+              <p style={{color:"#a0a0a0",fontSize:10}}>fidélité</p>
+            </div>
+          </div>
+          <div style={{marginBottom:8}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
+              <span style={{color:niv.c,fontSize:10,fontWeight:600}}>{niv.icon} {niv.nom}</span>
+              {next && <span style={{color:"#a0a0a0",fontSize:10}}>{next.icon} {next.nom} · {next.min} pts</span>}
+            </div>
+            <div style={{height:5,background:"rgba(255,255,255,0.06)",borderRadius:10,overflow:"hidden"}}>
+              <div style={{
+                height:"100%", width:`${progPct}%`,
+                background:`linear-gradient(90deg,${niv.c}80,${niv.c})`,
+                borderRadius:10,
+                boxShadow:`0 0 8px ${niv.c}60`,
+                transition:"width 0.8s ease",
+              }}/>
+            </div>
+          </div>
+          {nextPalier && (
+            <div style={{display:"flex",alignItems:"center",gap:8,background:"rgba(0,0,0,0.25)",borderRadius:8,padding:"7px 10px",marginTop:8}}>
+              <span style={{fontSize:14}}>🎁</span>
+              <p style={{color:"#c0c0c0",fontSize:11}}>Encore <span style={{color:niv.c,fontWeight:700}}>{ptsToNext} pts</span> → <span style={{color:"#d8d8d8"}}>{nextPalier.reward}</span></p>
+            </div>
+          )}
+        </div>
+        {lastPalier && (
+          <div style={{
+            background:"linear-gradient(135deg,rgba(40,160,60,0.15),rgba(20,100,35,0.1))",
+            border:"1px solid rgba(80,200,90,0.4)",
+            borderRadius:14,padding:"14px 16px",marginBottom:16,
+            display:"flex",alignItems:"center",gap:12,
+            boxShadow:"0 0 20px rgba(60,180,70,0.15)",
+          }}>
+            <div style={{fontSize:32,flexShrink:0}}>🎁</div>
+            <div>
+              <p style={{color:"#6ed878",fontWeight:700,fontSize:13,marginBottom:2}}>Récompense débloquée !</p>
+              <p style={{color:"#a8d8a8",fontSize:12,lineHeight:1.5}}>{lastPalier.reward} · À réclamer en boutique</p>
+            </div>
+            <div style={{marginLeft:"auto",flexShrink:0}}>
+              <div style={{width:32,height:32,borderRadius:"50%",background:"rgba(80,200,90,0.2)",border:"1.5px solid rgba(80,200,90,0.5)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <span style={{color:"#5aba60",fontWeight:700,fontSize:16}}>✓</span>
+              </div>
+            </div>
+          </div>
+        )}
+        <p style={{color:"#a0a0a0",fontSize:10,fontWeight:700,letterSpacing:2,marginBottom:10}}>VOS NIVEAUX</p>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:18}}>
+          {NIVEAUX.map(n=>{
+            const active = pts >= n.min;
+            return(
+              <div key={n.nom} style={{
+                position:"relative",overflow:"hidden",
+                background: active ? `linear-gradient(135deg,${n.c}18,${n.c}08)` : "rgba(255,255,255,0.02)",
+                border:`1.5px solid ${active ? n.c+"70" : "rgba(255,255,255,0.06)"}`,
+                borderRadius:14, padding:"14px 12px",
+                opacity: active ? 1 : 0.4,
+                boxShadow: active ? `0 0 16px ${n.c}20` : "none",
+                transition:"all 0.3s",
+              }}>
+                {active && <div style={{position:"absolute",top:-15,right:-15,width:50,height:50,borderRadius:"50%",background:`${n.c}12`,pointerEvents:"none"}}/>}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
+                  <span style={{fontSize:26}}>{n.icon}</span>
+                  {active && <span style={{color:n.c,fontSize:11,fontWeight:700}}>✓</span>}
+                </div>
+                <p style={{color:active?n.c:"#a0a0a0",fontWeight:700,fontSize:14,marginBottom:2}}>{n.nom}</p>
+                <p style={{color:"#8a8a8a",fontSize:10}}>
+                  {n.min===0?"Dès l'inscription":`dès ${n.min} pts`}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+        <p style={{color:"#a0a0a0",fontSize:10,fontWeight:700,letterSpacing:2,marginBottom:12}}>PALIERS DE RÉCOMPENSES</p>
+        <div style={{position:"relative",paddingLeft:20,marginBottom:18}}>
+          <div style={{position:"absolute",left:6,top:8,bottom:8,width:2,background:"rgba(255,255,255,0.06)",borderRadius:2}}/>
+          {PALIERS.map((p,i)=>{
+            const done = pts >= p.pts;
+            const current = nextPalier && nextPalier.pts === p.pts;
+            const pct = done ? 100 : Math.min(100,Math.round((pts/p.pts)*100));
+            return(
+              <div key={p.pts} style={{display:"flex",gap:12,marginBottom:i<PALIERS.length-1?10:0,position:"relative"}}>
+                <div style={{
+                  position:"absolute", left:-20, top:10,
+                  width:14, height:14, borderRadius:"50%", flexShrink:0,
+                  background: done ? GOLD : current ? "rgba(201,168,76,0.3)" : "rgba(255,255,255,0.05)",
+                  border:`2px solid ${done ? GOLD : current ? `${GOLD}80` : "rgba(255,255,255,0.1)"}`,
+                  boxShadow: done ? `0 0 8px ${GOLD}80` : "none",
+                  zIndex:1,
+                }}/>
+                <div style={{
+                  flex:1,
+                  background: done
+                    ? "linear-gradient(135deg,rgba(201,168,76,0.14),rgba(160,120,20,0.08))"
+                    : current
+                    ? "rgba(201,168,76,0.05)"
+                    : "rgba(255,255,255,0.02)",
+                  border:`1px solid ${done ? "rgba(201,168,76,0.35)" : current ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.05)"}`,
+                  borderRadius:12, padding:"11px 13px",
+                  boxShadow: done ? "0 0 12px rgba(201,168,76,0.1)" : "none",
+                }}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:done||current?6:0}}>
+                    <div style={{display:"flex",alignItems:"center",gap:7}}>
+                      <span style={{
+                        background: done ? `${GOLD}22` : "rgba(255,255,255,0.04)",
+                        border:`1px solid ${done?`${GOLD}50`:"rgba(255,255,255,0.08)"}`,
+                        borderRadius:6, padding:"2px 7px",
+                        color: done ? GOLD : "#909090",
+                        fontSize:11, fontWeight:700,
+                      }}>{p.pts} pts</span>
+                      <span style={{color: done?"#e8e4dc":"#aaaaaa", fontSize:12, fontWeight:done?500:400}}>{p.reward}</span>
+                    </div>
+                    {done && <span style={{fontSize:16}}>🎁</span>}
+                  </div>
+                  {!done && (
+                    <div>
+                      <div style={{height:3,background:"rgba(255,255,255,0.05)",borderRadius:10,overflow:"hidden",marginTop:6}}>
+                        <div style={{height:"100%",width:`${pct}%`,background:`linear-gradient(90deg,${GOLD}60,${GOLD})`,borderRadius:10}}/>
+                      </div>
+                      {pts>0&&<p style={{color:"#8a8a8a",fontSize:9,marginTop:3}}>{pct}% atteint</p>}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <p style={{color:"#a0a0a0",fontSize:10,fontWeight:700,letterSpacing:2,marginBottom:10}}>BARÈME DE POINTS</p>
+        <div style={{
+          background:"rgba(8,12,8,0.8)",
+          border:`1px solid rgba(255,255,255,0.06)`,
+          borderRadius:14, overflow:"hidden", marginBottom:16,
+        }}>
+          {BAREME.map((b,i)=>(
+            <div key={b.label} style={{
+              display:"flex",alignItems:"center",gap:10,
+              padding:"11px 14px",
+              borderBottom: i<BAREME.length-1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+              background: i%2===0 ? "transparent" : "rgba(255,255,255,0.015)",
+            }}>
+              <span style={{fontSize:15,flexShrink:0}}>{b.icon}</span>
+              <p style={{flex:1,color:"#c0c0c0",fontSize:13}}>{b.label}</p>
+              <div style={{
+                background:"rgba(74,180,80,0.12)",
+                border:"1px solid rgba(74,180,80,0.25)",
+                borderRadius:20, padding:"3px 10px",
+              }}>
+                <span style={{color:"#5aba60",fontSize:12,fontWeight:700}}>+{b.pts}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{
+          background:"linear-gradient(135deg,rgba(180,140,20,0.2),rgba(140,100,10,0.15))",
+          border:`1px solid ${GOLD}40`,
+          borderRadius:14, padding:"16px",
+          display:"flex",alignItems:"center",gap:14,
+          marginBottom:4,
+        }}>
+          <div style={{
+            width:46,height:46,borderRadius:12,flexShrink:0,
+            background:`${GOLD}20`,border:`1.5px solid ${GOLD}50`,
+            display:"flex",alignItems:"center",justifyContent:"center",
+          }}>
+            <span style={{fontSize:22}}>📱</span>
+          </div>
+          <div>
+            <p style={{color:"#e8e4dc",fontWeight:700,fontSize:13,marginBottom:3}}>Gagnez des points facilement</p>
+            <p style={{color:"#b8b8b8",fontSize:12,lineHeight:1.5}}>Scannez le code de votre pochon<br/>dans l'onglet <span style={{color:GOLD,fontWeight:600}}>Scanner</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+const GRAM_SCAN=[
+  {q:"1g",pts:1},{q:"1,5g",pts:1},{q:"2g",pts:2},{q:"2,5g",pts:2},
+  {q:"3g",pts:3},{q:"3,5g",pts:3},{q:"5g",pts:5},{q:"7g",pts:7},
+  {q:"10g",pts:10},{q:"Pré-roulé",pts:1},{q:"E-cigarette",pts:10},
+];
+
+function ScannerPage({user,onScan}){
+  const [val,setVal]=useState("");
+  const [gram,setGram]=useState("10g");
+  const [msg,setMsg]=useState("");
+  const [success,setSuccess]=useState(false);
+
+  function go(){
+    if(val.length!==5){setMsg("❌ Le code doit contenir 5 chiffres.");return;}
+    const r=onScan(val,gram);
+    setMsg(r);
+    setSuccess(r.startsWith("✅"));
+    setVal("");
+    setTimeout(()=>{setMsg("");setSuccess(false);},4000);
+  }
+
+  const gramInfo = GRAM_SCAN.find(g=>g.q===gram)||{pts:1};
+
+  return(
+    <div style={{paddingBottom:80}}>
+      <Header title="Scanner"/>
+      <div style={{padding:"28px 20px 0",display:"flex",flexDirection:"column",alignItems:"center"}}>
+        <div style={{fontSize:64,marginBottom:14}}>📱</div>
+        <h2 style={{fontFamily:"Georgia,serif",color:GOLD,fontSize:26,marginBottom:6,textAlign:"center"}}>Scanner mon code</h2>
+        <p style={{color:"#aaaaaa",fontSize:13,lineHeight:1.7,marginBottom:24,maxWidth:300,textAlign:"center"}}>
+          Entrez le code à 5 chiffres de votre pochon pour gagner vos <span style={{color:GOLD,fontWeight:600}}>points fidélité</span>.
+        </p>
+
+        <div style={{width:"100%",maxWidth:340}}>
+          <div style={{background:"rgba(8,12,8,0.9)",border:`1px solid ${BORDER}`,borderRadius:14,padding:"14px",marginBottom:16}}>
+            <p style={{color:"#b8b8b8",fontSize:11,fontWeight:700,letterSpacing:1,marginBottom:10,textAlign:"center"}}>GRAMMAGE DU POCHON</p>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
+              {GRAM_SCAN.filter(g=>!g.q.includes("roulé")&&!g.q.includes("iga")).map(g=>(
+                <button key={g.q} onClick={()=>setGram(g.q)} style={{
+                  background: gram===g.q ? `${GOLD}22` : "rgba(255,255,255,0.04)",
+                  border: `1.5px solid ${gram===g.q ? GOLD : "rgba(255,255,255,0.08)"}`,
+                  borderRadius:9, padding:"8px 4px", cursor:"pointer",
+                  boxShadow: gram===g.q ? `0 0 10px ${GOLD}40` : "none",
+                }}>
+                  <p style={{color:gram===g.q?GOLD:"#d8d8d8",fontSize:13,fontWeight:700}}>{g.q}</p>
+                  <p style={{color:gram===g.q?"#5aba60":"#707070",fontSize:10,marginTop:2}}>+{g.pts} pt{g.pts>1?"s":""}</p>
+                </button>
+              ))}
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginTop:6}}>
+              {GRAM_SCAN.filter(g=>g.q.includes("roulé")||g.q.includes("iga")).map(g=>(
+                <button key={g.q} onClick={()=>setGram(g.q)} style={{
+                  background: gram===g.q ? `${GOLD}22` : "rgba(255,255,255,0.04)",
+                  border: `1.5px solid ${gram===g.q ? GOLD : "rgba(255,255,255,0.08)"}`,
+                  borderRadius:9, padding:"8px 6px", cursor:"pointer",
+                  boxShadow: gram===g.q ? `0 0 10px ${GOLD}40` : "none",
+                }}>
+                  <p style={{color:gram===g.q?GOLD:"#d8d8d8",fontSize:12,fontWeight:700}}>{g.q}</p>
+                  <p style={{color:gram===g.q?"#5aba60":"#707070",fontSize:10,marginTop:2}}>+{g.pts} pt{g.pts>1?"s":""}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div style={{background:`${GOLD}10`,border:`1px solid ${GOLD}30`,borderRadius:10,padding:"10px 14px",marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <span style={{color:"#b8b8b8",fontSize:13}}>Pochon sélectionné</span>
+            <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <span style={{color:GOLD,fontWeight:700,fontSize:15}}>{gram}</span>
+              <span style={{background:"rgba(74,180,80,0.15)",border:"1px solid rgba(74,180,80,0.3)",borderRadius:20,padding:"2px 9px",color:"#5aba60",fontSize:12,fontWeight:700}}>+{gramInfo.pts} pt{gramInfo.pts>1?"s":""}</span>
+            </div>
+          </div>
+          <p style={{color:"#b8b8b8",fontSize:11,fontWeight:700,letterSpacing:1,marginBottom:8,textAlign:"center"}}>CODE DU POCHON</p>
+          <input
+            placeholder="_ _ _ _ _"
+            value={val}
+            onChange={e=>setVal(e.target.value.replace(/\D/g,"").slice(0,5))}
+            onKeyDown={e=>e.key==="Enter"&&go()}
+            style={{...IS,textAlign:"center",letterSpacing:14,fontSize:32,fontWeight:700,marginBottom:14,
+              borderColor: val.length===5 ? `${GOLD}80` : "rgba(255,255,255,0.13)"}}
+            maxLength={5}
+            inputMode="numeric"
+          />
+          {msg&&(
+            <div style={{
+              background: success ? "rgba(74,180,80,0.12)" : "rgba(239,68,68,0.1)",
+              border: `1px solid ${success?"rgba(74,180,80,0.35)":"rgba(239,68,68,0.3)"}`,
+              borderRadius:12, padding:"12px 16px", marginBottom:14, textAlign:"center",
+            }}>
+              <p style={{color:success?"#5aba60":"#f87171",fontSize:14,fontWeight:600}}>{msg}</p>
+            </div>
+          )}
+
+          <button onClick={go} style={{...BTN_GOLD,opacity:val.length===5?1:0.5}}>
+            Valider le code →
+          </button>
+          {user && (
+            <div style={{marginTop:20,background:"rgba(8,12,8,0.8)",border:`1px solid ${BORDER}`,borderRadius:12,padding:"12px 16px",textAlign:"center"}}>
+              <p style={{color:GOLD,fontWeight:700,fontSize:16}}>{user.points||0} pts</p>
+              <p style={{color:"#aaaaaa",fontSize:12,marginTop:2}}>{user.prenom} · Programme fidélité</p>
+            </div>
+          )}
+          {!user&&<p style={{color:"#909090",fontSize:12,marginTop:16,textAlign:"center"}}>Connectez-vous pour cumuler des points</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DemandesPanel({store, fu}){
+  const [sousTab, setSousTab] = useState("acces");
+
+  const demandesAcces     = store.demandesPro.filter(d=>d.type==="acces"||!d.type);
+  const demandesPartenariat = store.demandesPro.filter(d=>d.type==="partenariat");
+  const demandesApporteur   = store.demandesPro.filter(d=>d.type==="apporteur");
+
+  const badgeAcces = demandesAcces.filter(d=>d.statut==="attente").length;
+  const badgePart  = demandesPartenariat.filter(d=>d.statut==="attente").length;
+  const badgeApp   = demandesApporteur.filter(d=>d.statut==="attente").length;
+
+  const SOUS=[
+    {id:"acces",      label:"🔑 Accès code",    badge:badgeAcces,  color:"#4a9ad4"},
+    {id:"partenariat",label:"🤝 Partenariats",   badge:badgePart,   color:"#c9a84c"},
+    {id:"apporteur",  label:"💸 Apporteurs",     badge:badgeApp,    color:"#5aba60"},
+  ];
+
+  function DemandCard({d, i, liste}){
+    const idx = store.demandesPro.indexOf(d);
+    const isAcces = d.type==="acces"||!d.type;
+    const isPart  = d.type==="partenariat";
+    const isApp   = d.type==="apporteur";
+    return(
+      <Card style={{marginBottom:12}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
+          <div>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
+              <span style={{
+                background: isAcces?"rgba(74,154,212,0.15)":isPart?"rgba(201,168,76,0.15)":"rgba(74,180,80,0.15)",
+                border:`1px solid ${isAcces?"rgba(74,154,212,0.4)":isPart?"rgba(201,168,76,0.4)":"rgba(74,180,80,0.4)"}`,
+                color: isAcces?"#4a9ad4":isPart?GOLD:"#5aba60",
+                borderRadius:20,padding:"2px 8px",fontSize:9,fontWeight:700,letterSpacing:.5,
+              }}>
+                {isAcces?"🔑 ACCÈS CODE":isPart?"🤝 PARTENARIAT":"💸 APPORTEUR"}
+              </span>
+            </div>
+            <p style={{color:"#e8e4dc",fontWeight:600,fontSize:14}}>{d.prenom}</p>
+            {d.email&&<p style={{color:"#b8b8b8",fontSize:12,marginTop:1}}>{d.email}</p>}
+            {d.tel&&<p style={{color:"#b8b8b8",fontSize:12,marginTop:1}}>📞 {d.tel}</p>}
+            <p style={{color:"#909090",fontSize:11,marginTop:2}}>{d.date}</p>
+          </div>
+          <span style={{
+            background:d.statut==="attente"?"rgba(251,191,36,0.12)":d.statut==="validee"?"rgba(74,180,80,0.12)":"rgba(239,68,68,0.12)",
+            color:d.statut==="attente"?"#fbbf24":d.statut==="validee"?"#5aba60":"#f87171",
+            border:`1px solid ${d.statut==="attente"?"rgba(251,191,36,0.4)":d.statut==="validee"?"rgba(74,180,80,0.4)":"rgba(239,68,68,0.4)"}`,
+            borderRadius:20,padding:"4px 10px",fontSize:11,fontWeight:600,flexShrink:0,
+          }}>
+            {d.statut==="attente"?"⏳ Attente":d.statut==="validee"?"✅ Validée":"❌ Refusée"}
+          </span>
+        </div>
+        <div style={{background:"rgba(255,255,255,0.04)",borderRadius:8,padding:"9px 11px",marginBottom:10}}>
+          {(isAcces||isPart)&&<>
+            {d.siret&&<p style={{color:"#b8b8b8",fontSize:12}}>SIRET : <span style={{color:"#d8d8d8"}}>{d.siret}</span></p>}
+            {d.tva&&<p style={{color:"#b8b8b8",fontSize:12,marginTop:2}}>TVA : <span style={{color:"#d8d8d8"}}>{d.tva}</span></p>}
+          </>}
+          {isPart&&d.formule&&(
+            <p style={{color:"#b8b8b8",fontSize:12,marginTop:2}}>Formule souhaitée : <span style={{color:GOLD,fontWeight:600}}>{d.formule}</span></p>
+          )}
+          {isApp&&d.info&&(
+            <p style={{color:"#b8b8b8",fontSize:12}}>Commerçant : <span style={{color:"#d8d8d8"}}>{d.info}</span></p>
+          )}
+        </div>
+        {d.statut==="attente"&&(
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={()=>{store.demandesPro[idx].statut="validee";fu();}}
+              style={{flex:1,background:"rgba(74,180,80,0.13)",border:"1px solid rgba(74,180,80,0.35)",color:"#5aba60",borderRadius:10,padding:"10px",fontSize:12,fontWeight:600,cursor:"pointer"}}>
+              ✅ Valider
+            </button>
+            <button onClick={()=>{store.demandesPro[idx].statut="refusee";fu();}}
+              style={{flex:1,background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.28)",color:"#f87171",borderRadius:10,padding:"10px",fontSize:12,fontWeight:600,cursor:"pointer"}}>
+              ❌ Refuser
+            </button>
+          </div>
+        )}
+        {d.statut==="validee"&&isAcces&&(
+          <div style={{background:"rgba(74,154,212,0.08)",border:"1px solid rgba(74,154,212,0.25)",borderRadius:8,padding:"10px 12px",textAlign:"center"}}>
+            <p style={{color:"#4a9ad4",fontSize:12,fontWeight:600,marginBottom:3}}>🔑 Code d'accès à envoyer</p>
+            <p style={{color:"#d8d8d8",fontSize:13}}>Envoyez le code <span style={{color:GOLD,fontWeight:800,fontSize:16,letterSpacing:4}}> 5555 </span> à</p>
+            <p style={{color:"#4a9ad4",fontSize:13,fontWeight:600,marginTop:2}}>{d.email}</p>
+          </div>
+        )}
+        {d.statut==="validee"&&isPart&&(
+          <div style={{background:"rgba(201,168,76,0.08)",border:`1px solid ${BORDER}`,borderRadius:8,padding:"10px 12px",textAlign:"center"}}>
+            <p style={{color:GOLD,fontSize:12,fontWeight:600,marginBottom:2}}>🤝 Partenariat validé</p>
+            <p style={{color:"#b8b8b8",fontSize:12}}>Contactez <span style={{color:"#d8d8d8",fontWeight:600}}>{d.prenom}</span> pour finaliser le contrat.</p>
+          </div>
+        )}
+        {d.statut==="validee"&&isApp&&(
+          <div style={{background:"rgba(74,180,80,0.08)",border:"1px solid rgba(74,180,80,0.22)",borderRadius:8,padding:"10px 12px",textAlign:"center"}}>
+            <p style={{color:"#5aba60",fontSize:12,fontWeight:600,marginBottom:2}}>💸 Apporteur validé</p>
+            <p style={{color:"#b8b8b8",fontSize:12}}>Rappeler <span style={{color:"#d8d8d8",fontWeight:600}}>{d.prenom}</span> pour la mise en relation.</p>
+          </div>
+        )}
+        {d.statut==="refusee"&&(
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:4}}>
+            <p style={{color:"#f87171",fontSize:12}}>Demande refusée</p>
+            <button onClick={()=>{store.demandesPro.splice(idx,1);fu();}} style={{...BTN_RED,cursor:"pointer"}}>Supprimer</button>
+          </div>
+        )}
+      </Card>
+    );
+  }
+
+  const listeActive = sousTab==="acces" ? demandesAcces : sousTab==="partenariat" ? demandesPartenariat : demandesApporteur;
+
+  return(
+    <>
+      <div style={{display:"flex",gap:6,marginBottom:14}}>
+        {SOUS.map(s=>(
+          <button key={s.id} onClick={()=>setSousTab(s.id)} style={{
+            flex:1, position:"relative",
+            background: sousTab===s.id ? `${s.color}18` : "rgba(255,255,255,0.03)",
+            border:`1.5px solid ${sousTab===s.id ? s.color+"70" : "rgba(255,255,255,0.07)"}`,
+            color: sousTab===s.id ? s.color : "#909090",
+            borderRadius:10, padding:"8px 4px", fontSize:11, fontWeight:sousTab===s.id?700:400,
+            cursor:"pointer", textAlign:"center",
+          }}>
+            {s.label}
+            {s.badge>0&&<span style={{
+              position:"absolute",top:-5,right:-4,
+              background:"#f87171",color:"#fff",borderRadius:"50%",
+              width:15,height:15,fontSize:9,fontWeight:700,
+              display:"flex",alignItems:"center",justifyContent:"center",
+            }}>{s.badge}</span>}
+          </button>
+        ))}
+      </div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+        <p style={{color:"#909090",fontSize:11,letterSpacing:1}}>
+          {sousTab==="acces"?"DEMANDES D'ACCÈS CODE":sousTab==="partenariat"?"DEMANDES DE PARTENARIAT":"DEMANDES APPORTEURS"}
+          {" "}({listeActive.length})
+        </p>
+        {listeActive.filter(d=>d.statut==="attente").length>0&&(
+          <span style={{background:"rgba(248,113,113,0.15)",color:"#f87171",border:"1px solid rgba(248,113,113,0.35)",borderRadius:20,padding:"3px 10px",fontSize:11,fontWeight:600}}>
+            {listeActive.filter(d=>d.statut==="attente").length} en attente
+          </span>
+        )}
+      </div>
+      {listeActive.length===0
+        ? <div style={{textAlign:"center",padding:"40px 0"}}>
+            <p style={{fontSize:32,marginBottom:10}}>📭</p>
+            <p style={{color:"#909090",fontSize:13}}>
+              {sousTab==="acces"?"Aucune demande d'accès":sousTab==="partenariat"?"Aucune demande de partenariat":"Aucune demande apporteur"}
+            </p>
+          </div>
+        : listeActive.map((d,i)=><DemandCard key={i} d={d} i={i}/>)
+      }
+    </>
+  );
+}
+
+function AvisSousPanel({store, fu}){
+  const [avisSous,setAvisSous]=useState("attente");
+  const liste = store.avis.filter(a=>a.statut===avisSous);
+  return(
+    <>
+      <div style={{display:"flex",gap:6,marginBottom:12}}>
+        {[["attente","⏳ En attente","#fbbf24"],["publie","✅ Publiés","#5aba60"]].map(([id,label,col])=>(
+          <button key={id} onClick={()=>setAvisSous(id)} style={{
+            flex:1,
+            background:avisSous===id?`${col}15`:"rgba(255,255,255,0.03)",
+            border:`1.5px solid ${avisSous===id?col+"60":"rgba(255,255,255,0.07)"}`,
+            color:avisSous===id?col:"#909090",
+            borderRadius:10,padding:"8px",fontSize:12,fontWeight:avisSous===id?700:400,cursor:"pointer",
+          }}>{label} ({store.avis.filter(a=>a.statut===id).length})</button>
+        ))}
+        {store.avis.length>0&&(
+          <button onClick={()=>{store.avis=[];fu();}} style={{...BTN_RED,padding:"8px 10px",fontSize:11,cursor:"pointer"}}>🗑️</button>
+        )}
+      </div>
+      {liste.length===0
+        ?<div style={{textAlign:"center",padding:"32px 0"}}>
+          <p style={{fontSize:28,marginBottom:8}}>{avisSous==="attente"?"📭":"📋"}</p>
+          <p style={{color:"#909090",fontSize:13}}>{avisSous==="attente"?"Aucun avis en attente":"Aucun avis publié"}</p>
+        </div>
+        :liste.map((a,i)=>{
+          const idx=store.avis.indexOf(a);
+          return(
+            <Card key={i} style={{marginBottom:12,border:`1px solid ${a.statut==="attente"?"rgba(251,191,36,0.2)":"rgba(74,180,80,0.2)"}`}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
+                <div>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
+                    <p style={{color:"#e8e4dc",fontWeight:700,fontSize:14}}>{a.auteur}</p>
+                    <span style={{letterSpacing:1,fontSize:13}}>{"⭐".repeat(a.note)}</span>
+                    <span style={{color:GOLD,fontSize:11,fontWeight:700}}>{a.note}/5</span>
+                  </div>
+                  <p style={{color:"#707070",fontSize:11}}>{a.date}{a.produit&&<span style={{color:"#909090"}}> · {a.produit}</span>}</p>
+                </div>
+                <span style={{
+                  background:a.statut==="attente"?"rgba(251,191,36,0.12)":"rgba(74,180,80,0.12)",
+                  color:a.statut==="attente"?"#fbbf24":"#5aba60",
+                  border:`1px solid ${a.statut==="attente"?"rgba(251,191,36,0.4)":"rgba(74,180,80,0.4)"}`,
+                  borderRadius:20,padding:"3px 9px",fontSize:10,fontWeight:700,flexShrink:0,
+                }}>{a.statut==="attente"?"⏳ En attente":"✅ Publié"}</span>
+              </div>
+              <div style={{background:"rgba(255,255,255,0.04)",borderRadius:8,padding:"10px 12px",marginBottom:10}}>
+                <p style={{color:"#d8d8d8",fontSize:13,lineHeight:1.7,fontStyle:"italic"}}>"{a.texte}"</p>
+              </div>
+              <div style={{display:"flex",gap:8}}>
+                {a.statut==="attente"&&(
+                  <button onClick={()=>{store.avis[idx].statut="publie";fu();}}
+                    style={{flex:1,background:"rgba(74,180,80,0.13)",border:"1px solid rgba(74,180,80,0.35)",color:"#5aba60",borderRadius:10,padding:"9px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                    ✅ Valider et publier
+                  </button>
+                )}
+                {a.statut==="publie"&&(
+                  <button onClick={()=>{store.avis[idx].statut="attente";fu();}}
+                    style={{flex:1,background:"rgba(251,191,36,0.1)",border:"1px solid rgba(251,191,36,0.3)",color:"#fbbf24",borderRadius:10,padding:"9px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                    ↩️ Dépublier
+                  </button>
+                )}
+                <button onClick={()=>{store.avis.splice(idx,1);fu();}}
+                  style={{flex:1,background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.28)",color:"#f87171",borderRadius:10,padding:"9px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                  🗑️ Supprimer
+                </button>
+              </div>
+            </Card>
+          );
+        })
+      }
+    </>
+  );
+}
+
+function StatsVentes({store}){
+  const ventes = {};
+  store.commandes.forEach(cmd=>{
+    if(!cmd.detail) return;
+    cmd.detail.split(" | ").forEach(ligne=>{
+      const m = ligne.match(/^(.+?) — (.+?) — (.+?) ×(\d+)/);
+      if(!m) return;
+      const [,gamme,type,grammage,qteStr] = m;
+      const qte = parseInt(qteStr)||1;
+      const key = `${gamme}||${grammage}`;
+      if(!ventes[key]) ventes[key]={gamme,grammage,qte:0,type};
+      ventes[key].qte += qte;
+    });
+  });
+
+  const liste = Object.values(ventes).sort((a,b)=>b.qte-a.qte);
+  const total = liste.reduce((s,v)=>s+v.qte,0);
+  const max = liste[0]?.qte||1;
+  const parGamme = {};
+  liste.forEach(v=>{
+    const g = v.gamme.split("·")[0].trim().split("—")[0].trim();
+    if(!parGamme[g]) parGamme[g]=0;
+    parGamme[g]+=v.qte;
+  });
+  const gammes = Object.entries(parGamme).sort((a,b)=>b[1]-a[1]);
+
+  function exportStats(){
+    const date = new Date().toLocaleDateString("fr-FR");
+    let txt = `ORIGIN CBD — Statistiques ventes\nExportées le ${date}\n${"=".repeat(40)}\n\n`;
+    txt += `TOTAL ARTICLES VENDUS : ${total}\n\n`;
+    txt += `PAR GAMME :\n`;
+    gammes.forEach(([g,n])=>{ txt += `  ${g} : ${n} vente(s)\n`; });
+    txt += `\nDÉTAIL PAR PRODUIT (du plus vendu) :\n`;
+    liste.forEach((v,i)=>{ txt += `  ${i+1}. ${v.gamme} ${v.grammage} : ${v.qte} vente(s)\n`; });
+    const blob = new Blob([txt],{type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href=url; a.download=`stats_ventes_${date.replace(/\//g,"-")}.txt`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  return(
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+        <p style={{color:GOLD,fontSize:12,letterSpacing:1}}>STATISTIQUES VENTES</p>
+        {liste.length>0&&(
+          <button onClick={exportStats} style={{background:`${GOLD}20`,border:`1px solid ${GOLD}60`,color:GOLD,borderRadius:10,padding:"7px 13px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+            ⬇️ Exporter
+          </button>
+        )}
+      </div>
+
+      {liste.length===0?(
+        <div style={{textAlign:"center",padding:"40px 0"}}>
+          <p style={{fontSize:36,marginBottom:10}}>📊</p>
+          <p style={{color:"#909090",fontSize:13}}>Aucune vente enregistrée</p>
+          <p style={{color:"#555",fontSize:11,marginTop:6}}>Les stats se remplissent quand des clients passent commande</p>
+        </div>
+      ):(
+        <>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}}>
+            <div style={{background:"rgba(201,168,76,0.08)",border:`1px solid ${BORDER}`,borderRadius:12,padding:"14px",textAlign:"center"}}>
+              <p style={{color:GOLD,fontSize:28,fontWeight:800}}>{total}</p>
+              <p style={{color:"#909090",fontSize:11,marginTop:2,letterSpacing:.5}}>ARTICLES VENDUS</p>
+            </div>
+            <div style={{background:"rgba(74,180,80,0.08)",border:"1px solid rgba(74,180,80,0.2)",borderRadius:12,padding:"14px",textAlign:"center"}}>
+              <p style={{color:"#5aba60",fontSize:28,fontWeight:800}}>{liste.length}</p>
+              <p style={{color:"#909090",fontSize:11,marginTop:2,letterSpacing:.5}}>RÉFÉRENCES</p>
+            </div>
+          </div>
+          {liste[0]&&(
+            <div style={{background:"linear-gradient(135deg,rgba(251,191,36,0.15),rgba(201,168,76,0.08))",border:`1px solid ${GOLD}50`,borderRadius:12,padding:"14px",marginBottom:14,display:"flex",gap:12,alignItems:"center"}}>
+              <span style={{fontSize:30}}>🏆</span>
+              <div>
+                <p style={{color:"#fbbf24",fontSize:10,fontWeight:700,letterSpacing:1,marginBottom:2}}>MEILLEURE VENTE</p>
+                <p style={{color:"#e8e4dc",fontWeight:700,fontSize:15}}>{liste[0].gamme}</p>
+                <p style={{color:GOLD,fontSize:13}}>{liste[0].grammage} · <span style={{fontWeight:700}}>{liste[0].qte} vente{liste[0].qte>1?"s":""}</span></p>
+              </div>
+            </div>
+          )}
+          <p style={{color:"#707070",fontSize:10,fontWeight:700,letterSpacing:1.5,marginBottom:8}}>PAR GAMME</p>
+          <div style={{marginBottom:16}}>
+            {gammes.map(([g,n],i)=>(
+              <div key={g} style={{marginBottom:6}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
+                  <span style={{color:"#d8d8d8",fontSize:13,fontWeight:i===0?700:400}}>{g}</span>
+                  <span style={{color:i===0?GOLD:"#909090",fontWeight:700,fontSize:13}}>{n} vente{n>1?"s":""}</span>
+                </div>
+                <div style={{height:5,background:"rgba(255,255,255,0.06)",borderRadius:10,overflow:"hidden"}}>
+                  <div style={{height:"100%",width:`${Math.round((n/gammes[0][1])*100)}%`,background:i===0?`linear-gradient(90deg,${GOLD}80,${GOLD})`:"rgba(255,255,255,0.2)",borderRadius:10}}/>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p style={{color:"#707070",fontSize:10,fontWeight:700,letterSpacing:1.5,marginBottom:8}}>DÉTAIL PAR GRAMMAGE</p>
+          <div style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:12,overflow:"hidden"}}>
+            <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1.2fr",padding:"7px 12px",background:"rgba(201,168,76,0.06)",borderBottom:`1px solid ${BORDER}`}}>
+              {[["Produit","#909090"],["Qtés","#909090"],["Part",GOLD]].map(([h,col])=>(
+                <p key={h} style={{color:col,fontSize:10,fontWeight:700}}>{h}</p>
+              ))}
+            </div>
+            {liste.map((v,i)=>(
+              <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1.2fr",padding:"9px 12px",borderBottom:i<liste.length-1?"1px solid rgba(255,255,255,0.04)":"none",alignItems:"center",background:i%2===0?"transparent":"rgba(255,255,255,0.015)"}}>
+                <div>
+                  <p style={{color:"#d8d8d8",fontSize:12,fontWeight:i<3?600:400}}>{i===0?"🥇 ":i===1?"🥈 ":i===2?"🥉 ":""}{v.grammage}</p>
+                  <p style={{color:"#606060",fontSize:10,marginTop:1}}>{v.gamme.split("·")[0].trim()}</p>
+                </div>
+                <p style={{color:i<3?GOLD:"#c0c0c0",fontWeight:700,fontSize:13}}>{v.qte}</p>
+                <div style={{height:4,background:"rgba(255,255,255,0.06)",borderRadius:10,overflow:"hidden",width:"80%"}}>
+                  <div style={{height:"100%",width:`${Math.round((v.qte/max)*100)}%`,background:i===0?GOLD:"rgba(201,168,76,0.4)",borderRadius:10}}/>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+function Manager({onBack,store,tick,setTick}){
+  const [tab,setTab]=useState("demandes");
+  const [grammage,setGrammage]=useState("1g");
+  const [qteGen,setQteGen]=useState(5);
+  function fu(){setTick(t=>t+1);}
+  const GRAMMAGES=[
+    {q:"1g",    pts:1,  label:"1g — 1 pt"},
+    {q:"1,5g",  pts:1,  label:"1,5g — 1 pt"},
+    {q:"2g",    pts:2,  label:"2g — 2 pts"},
+    {q:"2,5g",  pts:2,  label:"2,5g — 2 pts"},
+    {q:"3g",    pts:3,  label:"3g — 3 pts"},
+    {q:"3,5g",  pts:3,  label:"3,5g — 3 pts"},
+    {q:"5g",    pts:5,  label:"5g — 5 pts"},
+    {q:"7g",    pts:7,  label:"7g — 7 pts"},
+    {q:"10g",   pts:10, label:"10g — 10 pts"},
+    {q:"pré-roulé", pts:1, label:"Pré-roulé — 1 pt"},
+    {q:"e-cigarette", pts:10, label:"E-cigarette — 10 pts"},
+  ];
+
+  function genCodes(){
+    const g = GRAMMAGES.find(x=>x.q===grammage) || GRAMMAGES[0];
+    Array.from({length:qteGen},()=>store.codes.push({
+      code: Math.floor(10000+Math.random()*90000).toString(),
+      used: false,
+      grammage: g.q,
+      pts: g.pts,
+    }));
+    fu();
+  }
+
+  const TABS=[{id:"demandes",l:"📨 Demandes"},{id:"adherents",l:"👥 Adhérents"},{id:"commandes",l:"📦 Commandes"},{id:"avis",l:"⭐ Avis"},{id:"codes",l:"🏷️ Codes"},{id:"stats",l:"📊 Stats"}];
+  const badge=store.demandesPro.filter(d=>d.statut==="attente").length;
+  const unusedCodes=store.codes.filter(c=>!c.used);
+  const usedCodes=store.codes.filter(c=>c.used);
+  const codesByGram = {};
+  store.codes.forEach((c,i)=>{
+    const key = c.grammage || "1g";
+    if(!codesByGram[key]) codesByGram[key]={grammage:key, pts:c.pts||1, codes:[]};
+    codesByGram[key].codes.push({...c, idx:i});
+  });
+
+  return(
+    <div style={{minHeight:"100vh",paddingBottom:40}}>
+      <Header title="Espace Gérant" onBack={onBack}/>
+      <div style={{padding:"12px 14px 0"}}>
+        <div style={{display:"flex",gap:5,marginBottom:16,flexWrap:"wrap"}}>
+          {TABS.map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={{background:tab===t.id?"rgba(201,168,76,0.18)":CARD,border:`1px solid ${tab===t.id?GOLD:BORDER}`,color:tab===t.id?GOLD:"#aaaaaa",borderRadius:10,padding:"8px 10px",fontSize:11,fontWeight:tab===t.id?600:400,cursor:"pointer",position:"relative"}}>
+              {t.l}
+              {t.id==="demandes"&&badge>0&&<span style={{position:"absolute",top:-5,right:-5,background:"#f87171",color:"#fff",borderRadius:"50%",width:15,height:15,fontSize:9,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>{badge}</span>}
+            </button>
+          ))}
+        </div>
+        {tab==="demandes"&&<DemandesPanel store={store} fu={fu}/>}
+        {tab==="adherents"&&<>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <p style={{color:GOLD,fontSize:12,letterSpacing:1}}>ADHÉRENTS ({store.users.length})</p>
+            {store.users.length>0&&(
+              <button onClick={()=>{
+                const date = new Date().toLocaleDateString("fr-FR");
+                const lignes = store.users.map((u,i)=>
+                  `${i+1}. ${u.prenom} | ${u.email} | ${u.points||0} pts`
+                ).join("\n");
+                const contenu = `ORIGIN CBD — Liste adhérents\nExportée le ${date}\n${"=".repeat(40)}\n\n${lignes}\n\n${"=".repeat(40)}\nTotal : ${store.users.length} adhérent(s)`;
+                const blob = new Blob([contenu], {type:"text/plain;charset=utf-8"});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href=url; a.download=`adherents_origincbd_${date.replace(/\//g,"-")}.txt`;
+                a.click(); URL.revokeObjectURL(url);
+              }} style={{background:`${GOLD}20`,border:`1px solid ${GOLD}60`,color:GOLD,borderRadius:10,padding:"7px 13px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                ⬇️ Exporter PDF/TXT
+              </button>
+            )}
+          </div>
+          {store.users.length===0
+            ?<div style={{textAlign:"center",padding:"40px 0"}}>
+              <p style={{fontSize:32,marginBottom:8}}>👥</p>
+              <p style={{color:"#909090",fontSize:13}}>Aucun adhérent inscrit</p>
+            </div>
+            :<>
+              <div style={{background:"rgba(255,255,255,0.03)",border:`1px solid ${BORDER}`,borderRadius:12,overflow:"hidden",marginBottom:12}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1.5fr 0.8fr",padding:"8px 14px",borderBottom:`1px solid ${BORDER}`,background:"rgba(201,168,76,0.06)"}}>
+                  {[["Prénom/Nom","#909090"],["Email","#909090"],["Points","#5aba60"]].map(([h,col])=>(
+                    <p key={h} style={{color:col,fontSize:10,fontWeight:700,letterSpacing:.5}}>{h}</p>
+                  ))}
+                </div>
+                {store.users.map((u,i)=>(
+                  <div key={i} style={{display:"grid",gridTemplateColumns:"1fr 1.5fr 0.8fr",padding:"10px 14px",borderBottom:i<store.users.length-1?"1px solid rgba(255,255,255,0.04)":"none",background:i%2===0?"transparent":"rgba(255,255,255,0.015)",alignItems:"center"}}>
+                    <p style={{color:"#e8e4dc",fontWeight:600,fontSize:13}}>{u.prenom}</p>
+                    <p style={{color:"#b0b0b0",fontSize:11,wordBreak:"break-all"}}>{u.email}</p>
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                      <span style={{color:"#5aba60",fontWeight:700,fontSize:13}}>🏆 {u.points||0}</span>
+                      <button onClick={()=>{store.users=store.users.filter(x=>x.email!==u.email);fu();}} style={{...BTN_RED,padding:"3px 7px",fontSize:11,cursor:"pointer"}}>×</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p style={{color:"#707070",fontSize:11,textAlign:"center"}}>Total : {store.users.length} adhérent(s) · {store.users.reduce((s,u)=>s+(u.points||0),0)} points cumulés</p>
+            </>
+          }
+        </>}
+        {tab==="commandes"&&<>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+            <p style={{color:GOLD,fontSize:12,letterSpacing:1}}>COMMANDES ({store.commandes.length})</p>
+            <div style={{display:"flex",gap:6}}>
+              <span style={{background:"rgba(251,191,36,0.12)",color:"#fbbf24",border:"1px solid rgba(251,191,36,0.3)",borderRadius:20,padding:"3px 10px",fontSize:11,fontWeight:600}}>
+                {store.commandes.filter(x=>x.statut==="nouvelle"||!x.statut).length} nouvelles
+              </span>
+            </div>
+          </div>
+          {store.commandes.length===0
+            ?<div style={{textAlign:"center",padding:"40px 0"}}>
+              <p style={{fontSize:32,marginBottom:8}}>📦</p>
+              <p style={{color:"#909090",fontSize:13}}>Aucune commande reçue</p>
+            </div>
+            :store.commandes.map((cmd,i)=>(
+              <Card key={i} style={{marginBottom:12,border:`1px solid ${cmd.statut==="traitee"?"rgba(74,180,80,0.25)":cmd.statut==="nouvelle"||!cmd.statut?"rgba(251,191,36,0.25)":"rgba(255,255,255,0.08)"}`}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
+                  <div>
+                    <p style={{color:"#e8e4dc",fontWeight:700,fontSize:15}}>{cmd.prenom}</p>
+                    <p style={{color:"#b0b0b0",fontSize:12,marginTop:1}}>📞 {cmd.tel}</p>
+                    <p style={{color:"#707070",fontSize:11,marginTop:1}}>{cmd.date}</p>
+                  </div>
+                  <div style={{textAlign:"right",flexShrink:0}}>
+                    <p style={{color:GOLD,fontWeight:800,fontSize:18}}>{cmd.total}</p>
+                    <span style={{
+                      background:cmd.statut==="traitee"?"rgba(74,180,80,0.12)":"rgba(251,191,36,0.12)",
+                      color:cmd.statut==="traitee"?"#5aba60":"#fbbf24",
+                      border:`1px solid ${cmd.statut==="traitee"?"rgba(74,180,80,0.4)":"rgba(251,191,36,0.4)"}`,
+                      borderRadius:20,padding:"2px 8px",fontSize:10,fontWeight:700,
+                    }}>{cmd.statut==="traitee"?"✅ Traitée":"⏳ Nouvelle"}</span>
+                  </div>
+                </div>
+                {cmd.detail&&(
+                  <div style={{background:"rgba(255,255,255,0.04)",borderRadius:8,padding:"8px 10px",marginBottom:8}}>
+                    {cmd.detail.split(" | ").map((ligne,j)=>(
+                      <p key={j} style={{color:"#c0c0c0",fontSize:12,lineHeight:1.7}}>• {ligne}</p>
+                    ))}
+                  </div>
+                )}
+                {cmd.note&&(
+                  <div style={{background:"rgba(201,168,76,0.06)",border:`1px solid ${BORDER}`,borderRadius:8,padding:"7px 10px",marginBottom:8}}>
+                    <p style={{color:"#909090",fontSize:11}}>💬 <span style={{color:"#c8c8c8",fontStyle:"italic"}}>{cmd.note}</span></p>
+                  </div>
+                )}
+                <div style={{display:"flex",gap:8}}>
+                  {(cmd.statut==="nouvelle"||!cmd.statut)&&(
+                    <button onClick={()=>{store.commandes[i].statut="traitee";fu();}}
+                      style={{flex:1,background:"rgba(74,180,80,0.13)",border:"1px solid rgba(74,180,80,0.35)",color:"#5aba60",borderRadius:10,padding:"9px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                      ✅ Marquer traitée
+                    </button>
+                  )}
+                  {cmd.statut==="traitee"&&(
+                    <button onClick={()=>{store.commandes[i].statut="nouvelle";fu();}}
+                      style={{flex:1,background:"rgba(251,191,36,0.1)",border:"1px solid rgba(251,191,36,0.3)",color:"#fbbf24",borderRadius:10,padding:"9px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                      ↩️ Rouvrir
+                    </button>
+                  )}
+                  <button onClick={()=>{store.commandes.splice(i,1);fu();}}
+                    style={{flex:1,background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.28)",color:"#f87171",borderRadius:10,padding:"9px",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                    🗑️ Supprimer
+                  </button>
+                </div>
+              </Card>
+            ))
+          }
+        </>}
+        {tab==="avis"&&<>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
+            {[
+              {label:"Total",val:store.avis.length,color:GOLD},
+              {label:"En attente",val:store.avis.filter(a=>a.statut==="attente").length,color:"#fbbf24"},
+              {label:"Publiés",val:store.avis.filter(a=>a.statut==="publie").length,color:"#5aba60"},
+            ].map(s=>(
+              <div key={s.label} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:10,padding:"10px",textAlign:"center"}}>
+                <p style={{color:s.color,fontSize:20,fontWeight:700}}>{s.val}</p>
+                <p style={{color:"#909090",fontSize:10,marginTop:2}}>{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <AvisSousPanel store={store} fu={fu}/>
+        </>}
+
+        {tab==="stats"&&<StatsVentes store={store}/>}
+        {tab==="codes"&&<>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
+            <div style={{background:"rgba(74,180,80,0.08)",border:"1px solid rgba(74,180,80,0.2)",borderRadius:10,padding:"10px 14px",textAlign:"center"}}>
+              <p style={{color:"#5aba60",fontSize:22,fontWeight:700}}>{unusedCodes.length}</p>
+              <p style={{color:"#4a9a50",fontSize:11,letterSpacing:1}}>DISPONIBLES</p>
+            </div>
+            <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:10,padding:"10px 14px",textAlign:"center"}}>
+              <p style={{color:"#909090",fontSize:22,fontWeight:700}}>{usedCodes.length}</p>
+              <p style={{color:"#707070",fontSize:11,letterSpacing:1}}>SCANNÉS</p>
+            </div>
+          </div>
+          <div style={{background:"rgba(201,168,76,0.06)",border:`1px solid ${BORDER}`,borderRadius:14,padding:"14px",marginBottom:14}}>
+            <p style={{color:GOLD,fontSize:12,fontWeight:700,letterSpacing:1,marginBottom:12}}>🏷️ GÉNÉRER DES CODES</p>
+            <p style={{color:"#b8b8b8",fontSize:11,letterSpacing:1,marginBottom:6}}>GRAMMAGE DU POCHON</p>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6,marginBottom:12}}>
+              {GRAMMAGES.map(g=>(
+                <button key={g.q} onClick={()=>setGrammage(g.q)} style={{
+                  background: grammage===g.q ? `${GOLD}25` : "rgba(255,255,255,0.04)",
+                  border: `1.5px solid ${grammage===g.q ? GOLD : "rgba(255,255,255,0.08)"}`,
+                  borderRadius:8, padding:"8px 4px", cursor:"pointer",
+                  display:"flex", flexDirection:"column", alignItems:"center", gap:2,
+                }}>
+                  <span style={{color: grammage===g.q ? GOLD : "#d8d8d8", fontSize:12, fontWeight:700}}>{g.q}</span>
+                  <span style={{
+                    color: grammage===g.q ? "#5aba60" : "#707070",
+                    fontSize:9, fontWeight:600,
+                    background: grammage===g.q ? "rgba(74,180,80,0.15)" : "transparent",
+                    borderRadius:10, padding:"1px 5px",
+                  }}>+{g.pts} pt{g.pts>1?"s":""}</span>
+                </button>
+              ))}
+            </div>
+            <p style={{color:"#b8b8b8",fontSize:11,letterSpacing:1,marginBottom:8}}>QUANTITÉ À GÉNÉRER</p>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+              <button onClick={()=>setQteGen(q=>Math.max(1,q-1))} style={{width:38,height:38,background:"rgba(255,255,255,0.06)",border:`1px solid ${BORDER}`,borderRadius:8,color:"#e8e4dc",fontSize:20,cursor:"pointer",flexShrink:0}}>−</button>
+              <div style={{flex:1,background:"rgba(255,255,255,0.04)",border:`1px solid ${BORDER}`,borderRadius:8,height:38,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <span style={{color:"#e8e4dc",fontSize:18,fontWeight:700}}>{qteGen}</span>
+              </div>
+              <button onClick={()=>setQteGen(q=>q+1)} style={{width:38,height:38,background:"rgba(255,255,255,0.06)",border:`1px solid ${BORDER}`,borderRadius:8,color:"#e8e4dc",fontSize:20,cursor:"pointer",flexShrink:0}}>+</button>
+              {[5,10,20,50].map(n=>(
+                <button key={n} onClick={()=>setQteGen(n)} style={{
+                  background: qteGen===n ? `${GOLD}20` : "rgba(255,255,255,0.04)",
+                  border:`1px solid ${qteGen===n ? GOLD : "rgba(255,255,255,0.08)"}`,
+                  color: qteGen===n ? GOLD : "#b8b8b8",
+                  borderRadius:7, padding:"5px 8px", fontSize:11, fontWeight:600, cursor:"pointer", flexShrink:0,
+                }}>{n}</button>
+              ))}
+            </div>
+            <div style={{background:"rgba(0,0,0,0.2)",borderRadius:8,padding:"10px 12px",marginBottom:12,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div>
+                <p style={{color:"#d8d8d8",fontSize:13}}>
+                  <span style={{color:GOLD,fontWeight:700}}>{qteGen} code{qteGen>1?"s":""}</span>
+                  {" · "}<span style={{color:"#d8d8d8"}}>{grammage}</span>
+                  {" · "}<span style={{color:"#5aba60",fontWeight:600}}>+{GRAMMAGES.find(x=>x.q===grammage)?.pts||1} pt{(GRAMMAGES.find(x=>x.q===grammage)?.pts||1)>1?"s":""} au scan</span>
+                </p>
+              </div>
+            </div>
+            <button onClick={genCodes} style={BTN_GOLD}>
+              ✨ Générer {qteGen} code{qteGen>1?"s":""} {grammage}
+            </button>
+          </div>
+          {unusedCodes.length>0&&(
+            <button onClick={()=>{store.codes=store.codes.filter(c=>c.used);fu();}} style={{width:"100%",background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.22)",color:"#f87171",borderRadius:10,padding:"10px",fontSize:12,cursor:"pointer",marginBottom:14}}>
+              🗑️ Supprimer tous les codes non utilisés ({unusedCodes.length})
+            </button>
+          )}
+          {store.codes.length===0
+            ? <p style={{color:"#909090",textAlign:"center",padding:32}}>Aucun code généré</p>
+            : Object.values(codesByGram).map(grp=>(
+              <div key={grp.grammage} style={{marginBottom:14}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                  <div style={{background:"rgba(201,168,76,0.12)",border:`1px solid ${BORDER}`,borderRadius:20,padding:"4px 12px",display:"flex",alignItems:"center",gap:8}}>
+                    <span style={{color:GOLD,fontSize:13,fontWeight:700}}>{grp.grammage}</span>
+                    <span style={{background:"rgba(74,180,80,0.15)",border:"1px solid rgba(74,180,80,0.3)",borderRadius:20,padding:"1px 7px",color:"#5aba60",fontSize:10,fontWeight:700}}>+{grp.pts} pt{grp.pts>1?"s":""}</span>
+                    <span style={{color:"#909090",fontSize:10}}>{grp.codes.filter(c=>!c.used).length} dispo · {grp.codes.filter(c=>c.used).length} scannés</span>
+                  </div>
+                  <div style={{flex:1,height:1,background:"rgba(255,255,255,0.06)"}}/>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(80px,1fr))",gap:6}}>
+                  {grp.codes.map((c)=>(
+                    <div key={c.idx} style={{
+                      background: c.used ? "rgba(20,20,20,0.6)" : "rgba(201,168,76,0.08)",
+                      border:`1px solid ${c.used?"rgba(255,255,255,0.04)":BORDER}`,
+                      borderRadius:10, padding:"8px 5px", textAlign:"center", position:"relative",
+                    }}>
+                      <p style={{color:c.used?"#5a5a5a":GOLD,fontSize:14,fontWeight:700,fontFamily:"monospace",letterSpacing:1}}>{c.code}</p>
+                      <p style={{color:c.used?"#4a4a4a":"#909090",fontSize:9,marginTop:2}}>{c.used?"✓ Scanné":"Disponible"}</p>
+                      {!c.used&&<button onClick={()=>{store.codes.splice(c.idx,1);fu();}} style={{position:"absolute",top:-4,right:-4,width:15,height:15,background:"rgba(239,68,68,0.8)",border:"none",borderRadius:"50%",color:"#fff",fontSize:9,cursor:"pointer",fontWeight:700,lineHeight:"15px"}}>×</button>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </>}
+      </div>
+    </div>
+  );
+}
+function App(){
+  const [phase,setPhase]=useState("age");
+  const [user,setUser]=useState(null);
+  const [tab,setTab]=useState("particulier");
+  const [tick,setTick]=useState(0);
+  function fu(){setTick(t=>t+1);}
+  useEffect(()=>{
+    const handler = ()=>fu();
+    window.addEventListener("origincbd_update", handler);
+    return ()=>window.removeEventListener("origincbd_update", handler);
+  },[]);
+
+  function handleScan(code, gram){
+    const GRAM_PTS={
+      "1g":1,"1,5g":1,"2g":2,"2,5g":2,"3g":3,"3,5g":3,
+      "5g":5,"7g":7,"10g":10,"Pré-roulé":1,"E-cigarette":10
+    };
+    const stored = STORE.codes.find(c=>c.code===code&&!c.used);
+    const alreadyUsed = STORE.usedCodes && STORE.usedCodes.includes(code);
+    if(alreadyUsed) return "❌ Code déjà scanné.";
+    if(stored) stored.used=true;
+    if(!STORE.usedCodes) STORE.usedCodes=[];
+    STORE.usedCodes.push(code);
+    const pts = stored ? (stored.pts||GRAM_PTS[gram]||1) : (GRAM_PTS[gram]||1);
+    const gramLabel = stored ? (stored.grammage||gram) : gram;
+    if(user){
+      user.points=(user.points||0)+pts;
+      const u=STORE.users.find(x=>x.email===user.email);
+      if(u)u.points=user.points;
+      setUser({...user});
+    }
+    fu();
+    const total = user?.points||pts;
+    return `✅ +${pts} point${pts>1?"s":""} (${gramLabel}) ! Total : ${total} point${total>1?"s":""}`;
+  }
+  const bgTheme = phase==="age"||phase==="login" ? "green"
+    : phase==="manager" ? "white"
+    : tab==="particulier" ? "green"
+    : tab==="pro"         ? "violet"
+    : tab==="fidelite"    ? "gold"
+    : tab==="scanner"     ? "red"
+    : "green";
+
+  const globalStyle=`
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#020403;font-family:system-ui,sans-serif;color:#e8e4dc}
+    input,select,button{font-family:inherit}
+    ::-webkit-scrollbar{width:3px}
+    ::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3);border-radius:3px}
+  `;
+
+  return(
+    <div style={{minHeight:"100vh",background:"#020403",color:"#e8e4dc",fontFamily:"system-ui,sans-serif"}}>
+      <style>{globalStyle}</style>
+      <GalaxyBg theme={bgTheme}/>
+      <div style={{position:"relative",zIndex:1}}>
+        {phase==="age"&&<AgeGate onAccept={()=>setPhase("login")}/>}
+        {phase==="login"&&<Welcome store={STORE} onUser={u=>{setUser(u);setPhase("app");}} onGuest={()=>setPhase("app")} onManager={()=>setPhase("manager")}/>}
+        {phase==="manager"&&<Manager onBack={()=>setPhase("login")} store={STORE} tick={tick} setTick={setTick}/>}
+        {phase==="app"&&<>
+          {tab==="particulier"&&<CatalogueParticulier user={user}/>}
+          {tab==="pro"&&<CataloguePro store={STORE} forceUpdate={fu}/>}
+          {tab==="fidelite"&&<Fidelite user={user}/>}
+          {tab==="scanner"&&<ScannerPage user={user} onScan={handleScan}/>}
+          <BottomNav tab={tab} setTab={setTab} onQuit={()=>setPhase("login")}/>
+        </>}
+      </div>
+    </div>
+  );
+}
+  const rootEl = document.getElementById('root');
+  const loadingEl = document.getElementById('loading');
+  ReactDOM.createRoot(rootEl).render(React.createElement(App));
+  if (loadingEl) loadingEl.style.display = 'none';
+  </script>
+</body>
+</html>
